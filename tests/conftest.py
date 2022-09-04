@@ -1,7 +1,13 @@
 import pathlib
 
+import flask
 import pytest
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from jinja2_fragments.flask import render_block as flask_render_block
+
+NAME = "Guido"
+LUCKY_NUMBER = "42"
 
 
 @pytest.fixture(scope="session")
@@ -28,3 +34,50 @@ def get_template(environment):
         return environment.get_template(template_name)
 
     return _get_template
+
+
+@pytest.fixture(scope="session")
+def flask_app():
+    app = flask.Flask(__name__)
+    app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
+    app.jinja_env.lstrip_blocks = True
+    app.jinja_env.trim_blocks = True
+
+    @app.get("/simple_page")
+    def simple_page():
+        template = "simple_page.html.jinja2"
+        if (
+            flask.request.args.get("only_content")
+            and flask.request.args["only_content"].lower() != "false"
+        ):
+            return flask_render_block(template, "content")
+        else:
+            return flask.render_template(template)
+
+    @app.get("/nested_content")
+    def nested_content():
+        return flask_render_block(
+            "nested_blocks_and_variables.html.jinja2",
+            "content",
+            name=NAME,
+            lucky_number=LUCKY_NUMBER,
+        )
+
+    @app.get("/nested_inner")
+    def nested_inner():
+        return flask_render_block(
+            "nested_blocks_and_variables.html.jinja2",
+            "inner",
+            lucky_number=LUCKY_NUMBER,
+        )
+
+    yield app
+
+
+@pytest.fixture(scope="session")
+def flask_client(flask_app):
+    return flask_app.test_client()

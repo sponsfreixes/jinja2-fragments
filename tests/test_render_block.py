@@ -1,4 +1,5 @@
 import pytest
+from conftest import LUCKY_NUMBER, NAME
 
 from jinja2_fragments import BlockNotFoundError, render_block
 
@@ -11,7 +12,11 @@ class TestFullpage:
             (
                 "nested_blocks_and_variables.html.jinja2",
                 "nested_blocks_and_variables_full_page.html",
-                {"title": "This is a title", "name": "Guido", "lucky_number": 42},
+                {
+                    "title": "This is a title",
+                    "name": NAME,
+                    "lucky_number": LUCKY_NUMBER,
+                },
             ),
         ],
     )
@@ -37,13 +42,13 @@ class TestRenderBlock:
                 "nested_blocks_and_variables.html.jinja2",
                 "nested_blocks_and_variables_content.html",
                 "content",
-                {"name": "Guido", "lucky_number": 42},
+                {"name": NAME, "lucky_number": LUCKY_NUMBER},
             ),
             (
                 "nested_blocks_and_variables.html.jinja2",
                 "nested_blocks_and_variables_inner.html",
                 "inner",
-                {"lucky_number": 42},
+                {"lucky_number": LUCKY_NUMBER},
             ),
         ],
     )
@@ -68,7 +73,7 @@ class TestRenderBlock:
                 "nested_blocks_and_variables.html.jinja2",
                 "nested_blocks_and_variables_content.html",
                 "bar",
-                {"name": "Guido", "lucky_number": 42},
+                {"name": NAME, "lucky_number": LUCKY_NUMBER},
             ),
         ],
     )

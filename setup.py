@@ -6,6 +6,7 @@ requires = [
 
 tests_requires = [
     "pytest",
+    "flask >= 2.1.0",
 ]
 
 dev_requires = [
