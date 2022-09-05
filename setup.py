@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 requires = [
-    "jinja2",
+    "jinja2 >= 3.1.0",
 ]
 
 tests_requires = [
