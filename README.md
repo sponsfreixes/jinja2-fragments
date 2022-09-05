@@ -1,12 +1,13 @@
 # Jinja2 fragments
 
-Jinja2 Fragments allows rendering blocks from [Jinja2 templates](https://palletsprojects.com/p/jinja/). This library was created
+Jinja2 Fragments allows rendering individual blocks from 
+[Jinja2 templates](https://palletsprojects.com/p/jinja/). This library was created
 to enable the pattern of 
 [Template Fragments](https://htmx.org/essays/template-fragments/) with Jinja2. It's a
 great pattern if you are using [HTMX](https://htmx.org/) or some other library that
 leverages fetching partial HTML.
 
-With jinja2. if you have a template block that you want to render by itself and
+With jinja2, if you have a template block that you want to render by itself and
 as part of another page, you are forced to put that block on a separate file and then
 use the [include tag](https://jinja.palletsprojects.com/en/3.1.x/templates/#include)
 (or [Jinja Partials](https://github.com/mikeckennedy/jinja_partials)) on the wrapping
