@@ -1,3 +1,6 @@
+import os
+import re
+
 from setuptools import find_packages, setup
 
 requires = [
@@ -13,11 +16,19 @@ dev_requires = [
     "pre-commit",
 ]
 
+
+def read(filename):
+    filename = os.path.join(os.path.dirname(__file__), filename)
+    with open(filename, encoding="utf-8") as fd:
+        return re.sub(":[a-z]+:`~?(.*?)`", "``\1``", fd.read())
+
+
 setup(
     name="jinja2_fragments",
     version="0.1.0",
     description="Render Jinja2 template block as HTML page fragments on Python "
     "web frameworks.",
+    long_description=read("README.md"),
     author="Sergi Pons Freixes",
     author_email="sergi@cub3.net",
     packages=find_packages(where="src"),
