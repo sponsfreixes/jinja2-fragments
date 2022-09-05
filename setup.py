@@ -15,7 +15,7 @@ dev_requires = [
 
 setup(
     name="jinja2_fragments",
-    version="1.0.0",
+    version="0.1.0",
     description="Render Jinja2 template block as HTML page fragments on Python "
     "web frameworks.",
     author="Sergi Pons Freixes",
