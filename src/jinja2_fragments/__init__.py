@@ -24,7 +24,7 @@ async def render_block_async(
 
     template = environment.get_template(template_name)
     block_render_func = template.blocks[block_name]
-    ctx = environment.new_context(dict(*args, **kwargs))
+    ctx = template.new_context(dict(*args, **kwargs))
     try:
         return environment.concat(  # type: ignore
             [n async for n in block_render_func(ctx)]  # type: ignore
