@@ -23,7 +23,13 @@ async def render_block_async(
         raise RuntimeError("The environment was not created with async mode enabled.")
 
     template = environment.get_template(template_name)
-    block_render_func = template.blocks[block_name]
+    try:
+        block_render_func = template.blocks[block_name]
+    except KeyError:
+        raise BlockNotFoundError(
+            f"Block '{block_name}' not found on template '{template_name}'"
+        )
+    
     ctx = template.new_context(dict(*args, **kwargs))
     try:
         return environment.concat(  # type: ignore
