@@ -50,5 +50,6 @@ setup(
     project_urls={
         "Source Code": "https://github.com/sponsfreixes/jinja2-fragments",
         "Issue Tracker": "https://github.com/sponsfreixes/jinja2-fragments/issues",
+        "Changes": "https://github.com/sponsfreixes/jinja2-fragments/blob/main/CHANGELOG.md",  # noqa
     },
 )
