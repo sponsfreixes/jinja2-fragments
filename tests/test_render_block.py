@@ -1,7 +1,7 @@
 import pytest
 from conftest import LUCKY_NUMBER, NAME
 
-from jinja2_fragments import BlockNotFoundError, render_block
+from jinja2_fragments import BlockNotFoundError, render_block, render_block_async
 
 
 class TestFullpage:
@@ -90,3 +90,44 @@ class TestRenderBlock:
             ) if params else render_block(environment, template_name, block)
             assert block in exc.value
             assert template_name in exc.value
+
+
+class TestAsyncRenderBlock:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "template_name, html_name, block, params",
+        [
+            ("simple_page.html.jinja2", "simple_page_content.html", "content", None),
+            (
+                "nested_blocks_and_variables.html.jinja2",
+                "nested_blocks_and_variables_content.html",
+                "content",
+                {"name": NAME, "lucky_number": LUCKY_NUMBER},
+            ),
+            (
+                "nested_blocks_and_variables.html.jinja2",
+                "nested_blocks_and_variables_inner.html",
+                "inner",
+                {"lucky_number": LUCKY_NUMBER},
+            ),
+        ],
+    )
+    async def test_async_block_render(
+        self,
+        event_loop,
+        async_environment,
+        get_html,
+        template_name,
+        html_name,
+        block,
+        params,
+    ):
+        """Test that the block_render_async function works."""
+        rendered = (
+            await render_block_async(async_environment, template_name, block, params)
+            if params
+            else await render_block_async(async_environment, template_name, block)
+        )
+
+        html = get_html(html_name)
+        assert html == rendered

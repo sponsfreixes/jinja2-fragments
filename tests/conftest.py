@@ -20,6 +20,17 @@ def environment():
     )
 
 
+@pytest.fixture(scope="session")
+def async_environment():
+    return Environment(
+        loader=FileSystemLoader("tests/templates"),
+        autoescape=select_autoescape(("html", "jinja2")),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        enable_async=True,
+    )
+
+
 @pytest.fixture(scope="function")
 def get_html():
     def _get_html(page_name):

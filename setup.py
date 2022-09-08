@@ -7,8 +7,9 @@ requires = [
 ]
 
 tests_requires = [
-    "pytest",
     "flask >= 2.1.0",
+    "pytest",
+    "pytest_asyncio",
 ]
 
 dev_requires = [
