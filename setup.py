@@ -45,4 +45,9 @@ setup(
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Text Processing :: Markup :: HTML",
     ],
+    url="https://github.com/sponsfreixes/jinja2-fragments",
+    project_urls={
+        "Source Code": "https://github.com/sponsfreixes/jinja2-fragments",
+        "Issue Tracker": "https://github.com/sponsfreixes/jinja2-fragments/issues",
+    },
 )
