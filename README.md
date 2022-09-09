@@ -82,6 +82,28 @@ def full_page():
 def only_content():
     return render_block("page.html.jinja2", "content", magic_number=42)
 ```
+
+## Usage with Quart
+
+If you want to use Jinja2 Fragments with Quart, assuming the same template as the
+example above, do:
+
+```python
+from quart import Quart, render_template
+from jinja2_fragments.quart import render_block
+
+app = Quart(__name__)
+
+@app.get("/full_page")
+async def full_page():
+    return await render_template("page.html.jinja2", magic_number=42)
+
+
+@app.get("/only_content")
+async def only_content():
+    return await render_block("page.html.jinja2", "content", magic_number=42)
+```
+
 ## How to collaborate
 
 This project uses pre-commit hooks to run black, isort, pyupgrade and flake8 on each commit. To have that running

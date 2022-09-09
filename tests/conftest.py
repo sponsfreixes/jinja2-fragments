@@ -2,9 +2,11 @@ import pathlib
 
 import flask
 import pytest
+import quart
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from jinja2_fragments.flask import render_block as flask_render_block
+from jinja2_fragments.quart import render_block as quart_render_block
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
@@ -92,3 +94,50 @@ def flask_app():
 @pytest.fixture(scope="session")
 def flask_client(flask_app):
     return flask_app.test_client()
+
+
+@pytest.fixture(scope="session")
+def quart_app():
+    app = quart.Quart(__name__)
+    app.config.from_mapping(
+        {
+            "TESTING": True,
+        }
+    )
+    app.jinja_env.lstrip_blocks = True
+    app.jinja_env.trim_blocks = True
+
+    @app.get("/simple_page")
+    async def simple_page():
+        template = "simple_page.html.jinja2"
+        if (
+            quart.request.args.get("only_content")
+            and quart.request.args["only_content"].lower() != "false"
+        ):
+            return await quart_render_block(template, "content")
+        else:
+            return await quart.render_template(template)
+
+    @app.get("/nested_content")
+    async def nested_content():
+        return await quart_render_block(
+            "nested_blocks_and_variables.html.jinja2",
+            "content",
+            name=NAME,
+            lucky_number=LUCKY_NUMBER,
+        )
+
+    @app.get("/nested_inner")
+    async def nested_inner():
+        return await quart_render_block(
+            "nested_blocks_and_variables.html.jinja2",
+            "inner",
+            lucky_number=LUCKY_NUMBER,
+        )
+
+    yield app
+
+
+@pytest.fixture(scope="session")
+def quart_client(quart_app):
+    return quart_app.test_client()
