@@ -14,7 +14,7 @@ use the [include tag](https://jinja.palletsprojects.com/en/3.1.x/templates/#incl
 template.
 
 With Jinja2 Fragments, following the
-[Locality of Behavior](https://htmx.org/essays/locality-of-behaviour/) design principle
+[Locality of Behavior](https://htmx.org/essays/locality-of-behaviour/) design principle,
 you have a single file for both cases. See below for examples.
 
 ## Install
@@ -105,36 +105,34 @@ async def only_content():
 ```
 ## Usage with FastAPI
 
-You can also use Jinja2 Fragments with FastAPI. FastAPI wraps Jinja `Environment` with the object `Jinja2Templates` and uses a `TemplateResponse` to create the HTML. Jinja2 Fragments uses the `Jinja2Templates` object to determine what response to send.
+You can also use Jinja2 Fragments with FastAPI. In this case, Jinja2 Fragments has a wrapper around the FastAPI `Jinja2Templates` object called `Jinja2Blocks`.
 
-For FastAPI, you use a decorator that takes the `Jinja2Templates` object as a positional parameter, and then you can then define the `block_name` as a key/value pair.
+It functions exactly the same, but allows you to include an optional parameter to the `TemplateResponse` that includes the `block_name` you want to render.
 
 Assuming the same template as the examples above:
 
 ```py
 from fastapi import FastAPI
 from fastapi.requests import Request
-from fastapi.templating import Jinja2Templates
+from jinja2_fragments.fastapi import Jinja2Blocks
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="path/to/templates")
+templates = Jinja2Blocks(directory="path/to/templates")
 
 @app.get("/full_page")
-@render_block(templates, magic_number=42)
 async def full_page(request: Request):
-    """No `block_name` given, so renders normally."""
     return templates.TemplateResponse(
         "page.html.jinja2",
-        {"request": request}
+        {"request": request, "magic_number": 42}
     )
 
 @app.get("/only_content")
-@render_block(templates, block_name="content", magic_number=42)
 async def only_content(request: Request):
     return templates.TemplateResponse(
         "page.html.jinja2",
-        {"request": request}
+        {"request": request, "magic_number": 42},
+        block_name="content"
     )
 ```
 ## How to collaborate
