@@ -7,7 +7,7 @@ import quart
 from fastapi.testclient import TestClient
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from jinja2_fragments.fastapi import render_block as fastapi_render_block
+from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
 
@@ -152,7 +152,7 @@ def fastapi_app():
 
     _app = fastapi.FastAPI()
 
-    templates: Jinja2Templates = Jinja2Templates(
+    templates: Jinja2Templates = Jinja2Blocks(
         "tests/templates",
         autoescape=select_autoescape(("html", "jinja2")),
         trim_blocks=True,
@@ -164,7 +164,6 @@ def fastapi_app():
         return {"msg": "Hello World"}
 
     @_app.get("/simple_page")
-    @fastapi_render_block(templates)
     async def simple_page(
         request: fastapi.requests.Request,
     ):
@@ -175,7 +174,6 @@ def fastapi_app():
         return templates.TemplateResponse(page_to_render, {"request": request})
 
     @_app.get("/simple_page_content")
-    @fastapi_render_block(templates, block_name="content")
     async def simple_page_content(
         request: fastapi.requests.Request,
     ):
@@ -183,15 +181,11 @@ def fastapi_app():
         parameter, so will only render content within that block.
         """
         page_to_render = "simple_page.html.jinja2"
-        return templates.TemplateResponse(page_to_render, {"request": request})
+        return templates.TemplateResponse(
+            page_to_render, {"request": request}, block_name="content"
+        )
 
     @_app.get("/nested_content")
-    @fastapi_render_block(
-        templates,
-        block_name="content",
-        name=NAME,
-        lucky_number=LUCKY_NUMBER,
-    )
     async def nested_content(request: fastapi.requests.Request):
         """Decorator wraps around route method and includes `block_name`
         plus parameters `name` and `lucky_number` which are passed
@@ -200,16 +194,11 @@ def fastapi_app():
         page_to_render = "nested_blocks_and_variables.html.jinja2"
         return templates.TemplateResponse(
             page_to_render,
-            {"request": request},
+            {"request": request, "name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_name="content",
         )
 
     @_app.get("/nested_inner")
-    @fastapi_render_block(
-        templates,
-        block_name="inner",
-        name=NAME,
-        lucky_number=LUCKY_NUMBER,
-    )
     async def nested_inner(request: fastapi.requests.Request):
         """Decorator wraps around route method and includes `block_name`
         plus parameters `name` and `lucky_number` which are passed
@@ -218,7 +207,8 @@ def fastapi_app():
         page_to_render = "nested_blocks_and_variables.html.jinja2"
         return templates.TemplateResponse(
             page_to_render,
-            {"request": request},
+            {"request": request, "lucky_number": LUCKY_NUMBER},
+            block_name="inner",
         )
 
     return _app
