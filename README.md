@@ -1,8 +1,8 @@
 # Jinja2 fragments
 
-Jinja2 Fragments allows rendering individual blocks from 
+Jinja2 Fragments allows rendering individual blocks from
 [Jinja2 templates](https://palletsprojects.com/p/jinja/). This library was created
-to enable the pattern of 
+to enable the pattern of
 [Template Fragments](https://htmx.org/essays/template-fragments/) with Jinja2. It's a
 great pattern if you are using [HTMX](https://htmx.org/) or some other library that
 leverages fetching partial HTML.
@@ -13,8 +13,8 @@ use the [include tag](https://jinja.palletsprojects.com/en/3.1.x/templates/#incl
 (or [Jinja Partials](https://github.com/mikeckennedy/jinja_partials)) on the wrapping
 template.
 
-With Jinja2 Fragments, following the 
-[Locality of Behavior](https://htmx.org/essays/locality-of-behaviour/) design principle
+With Jinja2 Fragments, following the
+[Locality of Behavior](https://htmx.org/essays/locality-of-behaviour/) design principle,
 you have a single file for both cases. See below for examples.
 
 ## Install
@@ -49,7 +49,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from jinja2_fragments import render_block
 
 environment = Environment(
-    loader=FileSystemLoader("my_templates"), 
+    loader=FileSystemLoader("my_templates"),
     autoescape=select_autoescape(("html", "jinja2"))
 )
 rendered_html = render_block(
@@ -103,7 +103,38 @@ async def full_page():
 async def only_content():
     return await render_block("page.html.jinja2", "content", magic_number=42)
 ```
+## Usage with FastAPI
 
+You can also use Jinja2 Fragments with FastAPI. In this case, Jinja2 Fragments has a wrapper around the FastAPI `Jinja2Templates` object called `Jinja2Blocks`.
+
+It functions exactly the same, but allows you to include an optional parameter to the `TemplateResponse` that includes the `block_name` you want to render.
+
+Assuming the same template as the examples above:
+
+```py
+from fastapi import FastAPI
+from fastapi.requests import Request
+from jinja2_fragments.fastapi import Jinja2Blocks
+
+app = FastAPI()
+
+templates = Jinja2Blocks(directory="path/to/templates")
+
+@app.get("/full_page")
+async def full_page(request: Request):
+    return templates.TemplateResponse(
+        "page.html.jinja2",
+        {"request": request, "magic_number": 42}
+    )
+
+@app.get("/only_content")
+async def only_content(request: Request):
+    return templates.TemplateResponse(
+        "page.html.jinja2",
+        {"request": request, "magic_number": 42},
+        block_name="content"
+    )
+```
 ## How to collaborate
 
 This project uses pre-commit hooks to run black, isort, pyupgrade and flake8 on each commit. To have that running
