@@ -9,6 +9,7 @@ requires = [
 tests_requires = [
     "flask >= 2.1.0",
     "quart >= 0.18.0",
+    "fastapi",
     "pytest",
     "pytest_asyncio",
 ]
@@ -22,7 +23,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="jinja2_fragments",
-    version="0.2.0",
+    version="0.3.0",
     description="Render Jinja2 template block as HTML page fragments on Python "
     "web frameworks.",
     long_description=long_description,
@@ -39,6 +40,8 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
         "Framework :: Flask",
+        "Framework :: Quart",
+        "Framework :: FastAPI",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
