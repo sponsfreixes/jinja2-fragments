@@ -40,7 +40,6 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
         "Framework :: Flask",
-        "Framework :: Quart",
         "Framework :: FastAPI",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
