@@ -114,6 +114,7 @@ Assuming the same template as the examples above:
 ```py
 from fastapi import FastAPI
 from fastapi.requests import Request
+from fastapi.responses import HTMLResponse
 from jinja2_fragments.fastapi import Jinja2Blocks
 
 app = FastAPI()
@@ -127,7 +128,7 @@ async def full_page(request: Request):
         {"request": request, "magic_number": 42}
     )
 
-@app.get("/only_content")
+@app.get("/only_content", response_class=HTMLResponse)
 async def only_content(request: Request):
     return templates.TemplateResponse(
         "page.html.jinja2",
