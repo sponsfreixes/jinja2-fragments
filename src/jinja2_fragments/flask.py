@@ -19,7 +19,7 @@ jinja2_fragments_signals = Namespace()
 before_render_template_block = jinja2_fragments_signals.signal(
     "before-render-template-block"
 )
-template_block_rendered = jinja2_fragments_signals.signal("template-bock-rendered")
+template_block_rendered = jinja2_fragments_signals.signal("template-block-rendered")
 
 
 def render_block(template_name: str, block_name: str, **context: typing.Any) -> str:
