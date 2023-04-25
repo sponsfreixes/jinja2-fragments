@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from jinja2 import Environment
 
 
-@dataclass
+@dataclass(eq=False)
 class BlockNotFoundError(Exception):
     block_name: str
     template_name: str

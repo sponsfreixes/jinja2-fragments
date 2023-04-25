@@ -33,6 +33,22 @@ class TestFullpage:
         assert html == rendered
 
 
+class TestBlockNotFoundError:
+    def test_dataclass_exception(self):
+        """
+        This tests the use of dataclasses with for the BlockNotFoundError exception.
+        To conform with non-dataclasses exceptions, instances should be mutable,
+        hashable and not equal to other instances of the class.
+        """
+
+        a = BlockNotFoundError("block", "template")
+        b = BlockNotFoundError("block", "template")
+        assert a != b
+        assert a is not b
+        hash(a)
+        a.hello = "world"
+
+
 class TestRenderBlock:
     @pytest.mark.parametrize(
         "template_name, html_name, block, params",
