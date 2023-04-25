@@ -88,8 +88,9 @@ class TestRenderBlock:
             render_block(
                 environment, template_name, block, params
             ) if params else render_block(environment, template_name, block)
-            assert block in exc.value
-            assert template_name in exc.value
+
+        assert exc.value.block_name == block
+        assert exc.value.template_name == template_name
 
 
 class TestAsyncRenderBlock:

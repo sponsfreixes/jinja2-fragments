@@ -1,10 +1,16 @@
 import typing
+from dataclasses import dataclass
 
 from jinja2 import Environment
 
 
+@dataclass
 class BlockNotFoundError(Exception):
-    pass
+    block_name: str
+    template_name: str
+
+    def __str__(self):
+        return f"Block {self.block_name!r} not found on template {self.template_name!r}"
 
 
 async def render_block_async(
@@ -26,10 +32,8 @@ async def render_block_async(
     try:
         block_render_func = template.blocks[block_name]
     except KeyError:
-        raise BlockNotFoundError(
-            f"Block '{block_name}' not found on template '{template_name}'"
-        )
-    
+        raise BlockNotFoundError(block_name, template_name)
+
     ctx = template.new_context(dict(*args, **kwargs))
     try:
         return environment.concat(  # type: ignore
@@ -72,9 +76,7 @@ def render_block(
     try:
         block_render_func = template.blocks[block_name]
     except KeyError:
-        raise BlockNotFoundError(
-            f"Block '{block_name}' not found on template '{template_name}'"
-        )
+        raise BlockNotFoundError(block_name, template_name)
 
     ctx = template.new_context(dict(*args, **kwargs))
     try:

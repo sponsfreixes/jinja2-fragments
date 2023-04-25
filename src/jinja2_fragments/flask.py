@@ -7,7 +7,7 @@ except ModuleNotFoundError as e:
         "Install flask before using jinja2_fragments.flask"
     ) from e
 
-import jinja2_fragments
+from . import render_block as _render_block
 
 try:
     from blinker import Namespace
@@ -35,9 +35,7 @@ def render_block(template_name: str, block_name: str, **context: typing.Any) -> 
     before_render_template_block.send(
         app, template_name=template_name, block_name=block_name, context=context
     )
-    rendered = jinja2_fragments.render_block(
-        app.jinja_env, template_name, block_name, **context
-    )
+    rendered = _render_block(app.jinja_env, template_name, block_name, **context)
     template_block_rendered.send(
         app, template_name=template_name, block_name=block_name, context=context
     )
