@@ -15,7 +15,7 @@ jinja2_fragments_signals = AsyncNamespace()
 before_render_template_block = jinja2_fragments_signals.signal(
     "before-render-template-block"
 )
-template_block_rendered = jinja2_fragments_signals.signal("template-bock-rendered")
+template_block_rendered = jinja2_fragments_signals.signal("template-block-rendered")
 
 
 async def render_block(
