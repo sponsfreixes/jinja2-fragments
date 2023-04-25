@@ -4,8 +4,8 @@ import fastapi
 import flask
 import pytest
 import quart
-from fastapi.testclient import TestClient
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from starlette.testclient import TestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block

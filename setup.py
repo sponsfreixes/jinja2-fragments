@@ -10,6 +10,7 @@ tests_requires = [
     "flask >= 2.1.0",
     "quart >= 0.18.0",
     "fastapi",
+    "starlette[full]",
     "pytest",
     "pytest_asyncio",
 ]
