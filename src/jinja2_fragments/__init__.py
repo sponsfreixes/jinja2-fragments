@@ -29,7 +29,7 @@ async def render_block_async(
         raise BlockNotFoundError(
             f"Block '{block_name}' not found on template '{template_name}'"
         )
-    
+
     ctx = template.new_context(dict(*args, **kwargs))
     try:
         return environment.concat(  # type: ignore
