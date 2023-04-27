@@ -1,16 +1,18 @@
 import typing
-from dataclasses import dataclass
 
 from jinja2 import Environment
 
 
-@dataclass(eq=False)
 class BlockNotFoundError(Exception):
-    block_name: str
-    template_name: str
-
-    def __str__(self):
-        return f"Block {self.block_name!r} not found on template {self.template_name!r}"
+    def __init__(
+        self, block_name: str, template_name: str, message: typing.Optional[str] = None
+    ):
+        self.block_name = block_name
+        self.template_name = template_name
+        super().__init__(
+            message
+            or f"Block {self.block_name!r} not found in template {self.template_name!r}"
+        )
 
 
 async def render_block_async(

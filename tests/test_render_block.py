@@ -34,19 +34,19 @@ class TestFullpage:
 
 
 class TestBlockNotFoundError:
-    def test_dataclass_exception(self):
+    def test_exception_message(self):
         """
-        This tests the use of dataclasses with for the BlockNotFoundError exception.
-        To conform with non-dataclasses exceptions, instances should be mutable,
-        hashable and not equal to other instances of the class.
+        This tests the optional message kwarg in the BlockNotFoundError exception.
         """
 
-        a = BlockNotFoundError("block", "template")
-        b = BlockNotFoundError("block", "template")
-        assert a != b
-        assert a is not b
-        hash(a)
-        a.hello = "world"
+        block, template = "the_block", "the_template"
+        message = f"{block} not found in {template}, please verify the values"
+
+        a = BlockNotFoundError(block, template)
+        assert "please" not in str(a)
+
+        b = BlockNotFoundError(block, template, message)
+        assert str(b) == message
 
 
 class TestRenderBlock:
