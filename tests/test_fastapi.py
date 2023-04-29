@@ -1,5 +1,9 @@
 import re
 
+import pytest
+
+from jinja2_fragments import BlockNotFoundError
+
 
 class TestFastAPIRenderBlock:
     """Tests each of the methods to make sure the html generated is
@@ -48,3 +52,10 @@ class TestFastAPIRenderBlock:
         html = get_html("nested_blocks_and_variables_inner.html")
         html = re.sub(r"[\s\"]*", "", html)
         assert html == response_text
+
+    def test_exception(self, fastapi_client):
+        with pytest.raises(BlockNotFoundError) as exc:
+            fastapi_client.get("/invalid_block")
+
+        assert exc.value.block_name == "invalid_block"
+        assert exc.value.template_name == "simple_page.html.jinja2"
