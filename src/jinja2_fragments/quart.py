@@ -9,13 +9,13 @@ except ModuleNotFoundError as e:
 
 from quart.signals import AsyncNamespace
 
-import jinja2_fragments
+from . import render_block_async
 
 jinja2_fragments_signals = AsyncNamespace()
 before_render_template_block = jinja2_fragments_signals.signal(
     "before-render-template-block"
 )
-template_block_rendered = jinja2_fragments_signals.signal("template-bock-rendered")
+template_block_rendered = jinja2_fragments_signals.signal("template-block-rendered")
 
 
 async def render_block(
@@ -33,7 +33,7 @@ async def render_block(
     await before_render_template_block.send(
         app, template_name=template_name, block_name=block_name, context=context
     )
-    rendered = await jinja2_fragments.render_block_async(
+    rendered = await render_block_async(
         app.jinja_env, template_name, block_name, **context
     )
     await template_block_rendered.send(

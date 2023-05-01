@@ -1,7 +1,11 @@
 import pytest
 
 from jinja2_fragments import BlockNotFoundError
-from jinja2_fragments.flask import render_block
+from jinja2_fragments.flask import (
+    before_render_template_block,
+    render_block,
+    template_block_rendered,
+)
 
 
 class TestFlaskRenderBlock:
@@ -37,5 +41,47 @@ class TestFlaskRenderBlock:
         with pytest.raises(BlockNotFoundError) as exc:
             with flask_app.app_context():
                 render_block("simple_page.html.jinja2", "invalid_block")
-            assert "invalid_block" in exc.value
-            assert "simple_page.html.jinja2" in exc.value
+
+        assert exc.value.block_name == "invalid_block"
+        assert exc.value.template_name == "simple_page.html.jinja2"
+
+    @pytest.mark.parametrize(
+        "signal",
+        [
+            before_render_template_block,
+            template_block_rendered,
+        ],
+    )
+    def test_signals(app, flask_app, flask_client, signal):
+        recorded = []
+
+        def record(sender, template_name, block_name, context):
+            context["testing"] = "yes please"
+            recorded.append((sender, template_name, block_name, context))
+
+        def call():
+            flask_client.get("/simple_page", query_string={"only_content": "true"})
+
+        # Test for absence of typo in signal name
+        assert signal is globals().get(signal.name.replace("-", "_"))
+
+        # No signal should be recorded
+        call()
+        assert len(recorded) == 0
+
+        # Connect, record one signal
+        signal.connect(record, flask_app)
+        call()
+        assert len(recorded) == 1
+
+        # Disconnect, stop recording signals
+        signal.disconnect(record, flask_app)
+        call()
+        assert len(recorded) == 1
+
+        # Verify values sent in the signal
+        sender, template_name, block_name, context = recorded[0]
+        assert sender == flask_app
+        assert template_name == "simple_page.html.jinja2"
+        assert block_name == "content"
+        assert context["testing"] == "yes please"

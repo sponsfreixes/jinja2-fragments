@@ -42,5 +42,6 @@ class TestQuartRenderBlock:
         with pytest.raises(BlockNotFoundError) as exc:
             async with quart_app.app_context():
                 await render_block("simple_page.html.jinja2", "invalid_block")
-            assert "invalid_block" in exc.value
-            assert "simple_page.html.jinja2" in exc.value
+
+        assert exc.value.block_name == "invalid_block"
+        assert exc.value.template_name == "simple_page.html.jinja2"

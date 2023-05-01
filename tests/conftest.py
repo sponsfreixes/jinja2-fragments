@@ -4,8 +4,8 @@ import fastapi
 import flask
 import pytest
 import quart
-from fastapi.testclient import TestClient
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from starlette.testclient import TestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
@@ -55,11 +55,7 @@ def get_template(environment):
 @pytest.fixture(scope="session")
 def flask_app():
     app = flask.Flask(__name__)
-    app.config.update(
-        {
-            "TESTING": True,
-        }
-    )
+    app.config["TESTING"] = True
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.trim_blocks = True
 
@@ -102,11 +98,7 @@ def flask_client(flask_app):
 @pytest.fixture(scope="session")
 def quart_app():
     app = quart.Quart(__name__)
-    app.config.from_mapping(
-        {
-            "TESTING": True,
-        }
-    )
+    app.config["TESTING"] = True
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.trim_blocks = True
 
@@ -209,6 +201,13 @@ def fastapi_app():
             page_to_render,
             {"request": request, "lucky_number": LUCKY_NUMBER},
             block_name="inner",
+        )
+
+    @_app.get("/invalid_block")
+    async def invalid_block(request: fastapi.requests.Request):
+        """Decorator wraps around route method and includes an unexisting block name."""
+        return templates.TemplateResponse(
+            "simple_page.html.jinja2", {"request": request}, block_name="invalid_block"
         )
 
     return _app

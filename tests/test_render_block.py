@@ -33,6 +33,22 @@ class TestFullpage:
         assert html == rendered
 
 
+class TestBlockNotFoundError:
+    def test_exception_message(self):
+        """
+        This tests the optional message kwarg in the BlockNotFoundError exception.
+        """
+
+        block, template = "the_block", "the_template"
+        message = f"{block} not found in {template}, please verify the values"
+
+        a = BlockNotFoundError(block, template)
+        assert "please" not in str(a)
+
+        b = BlockNotFoundError(block, template, message)
+        assert str(b) == message
+
+
 class TestRenderBlock:
     @pytest.mark.parametrize(
         "template_name, html_name, block, params",
@@ -88,8 +104,9 @@ class TestRenderBlock:
             render_block(
                 environment, template_name, block, params
             ) if params else render_block(environment, template_name, block)
-            assert block in exc.value
-            assert template_name in exc.value
+
+        assert exc.value.block_name == block
+        assert exc.value.template_name == template_name
 
 
 class TestAsyncRenderBlock:

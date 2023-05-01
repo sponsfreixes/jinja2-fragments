@@ -4,7 +4,15 @@ from jinja2 import Environment
 
 
 class BlockNotFoundError(Exception):
-    pass
+    def __init__(
+        self, block_name: str, template_name: str, message: typing.Optional[str] = None
+    ):
+        self.block_name = block_name
+        self.template_name = template_name
+        super().__init__(
+            message
+            or f"Block {self.block_name!r} not found in template {self.template_name!r}"
+        )
 
 
 async def render_block_async(
@@ -26,10 +34,8 @@ async def render_block_async(
     try:
         block_render_func = template.blocks[block_name]
     except KeyError:
-        raise BlockNotFoundError(
-            f"Block '{block_name}' not found on template '{template_name}'"
-        )
-    
+        raise BlockNotFoundError(block_name, template_name)
+
     ctx = template.new_context(dict(*args, **kwargs))
     try:
         return environment.concat(  # type: ignore
@@ -72,9 +78,7 @@ def render_block(
     try:
         block_render_func = template.blocks[block_name]
     except KeyError:
-        raise BlockNotFoundError(
-            f"Block '{block_name}' not found on template '{template_name}'"
-        )
+        raise BlockNotFoundError(block_name, template_name)
 
     ctx = template.new_context(dict(*args, **kwargs))
     try:
