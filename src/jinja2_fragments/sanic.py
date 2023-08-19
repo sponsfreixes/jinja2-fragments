@@ -25,7 +25,7 @@ async def render(
     *,
     block: Optional[str] = None
 ) -> sanic_render.TemplateResponse:
-    if block is None or block == "":
+    if not block:
         return await sanic_render.render(
             template_name=template_name,
             status=status,
