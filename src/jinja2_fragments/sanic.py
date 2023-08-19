@@ -40,7 +40,7 @@ async def render(
             app = Sanic.get_app()
         except SanicException as e:
             raise SanicException(
-                "Cannot render template beause locating the Sanic application "
+                "Cannot render template because locating the Sanic application "
                 "was ambiguous. Please return  render(..., app=some_app)."
             ) from e
 
