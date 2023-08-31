@@ -2,12 +2,12 @@ import sys
 
 import pytest
 
-if sys.version_info > (3, 7):
+if sys.version_info >= (3, 8):
     from sanic_testing.testing import SanicTestClient
 
 
 @pytest.mark.skipif(
-    sys.version_info <= (3, 7), reason="Sanic requires python3.8 or higher"
+    not (sys.version_info >= (3, 8)), reason="Sanic requires python 3.8 or higher"
 )
 class TestSanicRenderBlock:
     @pytest.mark.parametrize(

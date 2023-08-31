@@ -6,7 +6,7 @@ import flask
 import pytest
 import quart
 
-if sys.version_info > (3, 7):
+if sys.version_info >= (3, 8):
     import sanic
     import sanic_ext
 from jinja2 import Environment, FileSystemLoader, select_autoescape
