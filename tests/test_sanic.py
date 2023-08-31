@@ -1,14 +1,11 @@
-import sys
-
 import pytest
+from conftest import SANIC_ENABLED
 
-if sys.version_info >= (3, 8):
+if SANIC_ENABLED:
     from sanic_testing.testing import SanicTestClient
 
 
-@pytest.mark.skipif(
-    not (sys.version_info >= (3, 8)), reason="Sanic requires python 3.8 or higher"
-)
+@pytest.mark.skipif(not SANIC_ENABLED, reason="Sanic requires python 3.8 or higher")
 class TestSanicRenderBlock:
     @pytest.mark.parametrize(
         "only_content, html_name",
