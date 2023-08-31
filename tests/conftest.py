@@ -266,7 +266,7 @@ def sanic_app():
 
 
 @pytest.fixture(scope="session")
-def sanic_client(sanic_app: sanic.Sanic):
+def sanic_client(sanic_app: "sanic.Sanic"):
     if not SANIC_ENABLED:
         return
 
