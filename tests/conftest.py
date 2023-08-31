@@ -4,12 +4,15 @@ import fastapi
 import flask
 import pytest
 import quart
+import sanic
+import sanic_ext
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from starlette.testclient import TestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
+from jinja2_fragments.sanic import render as sanic_render
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
@@ -217,3 +220,42 @@ def fastapi_app():
 def fastapi_client(fastapi_app):
     _client = TestClient(fastapi_app)
     return _client
+
+
+@pytest.fixture(scope="session")
+def sanic_app():
+    app = sanic.Sanic(__name__)
+    app.extend(config=sanic_ext.Config(templating_path_to_templates="tests/templates"))
+    app.ext.environment.lstrip_blocks = True
+    app.ext.environment.trim_blocks = True
+
+    @app.get("/simple_page")
+    async def simple_page(request: sanic.Request):
+        template = "simple_page.html.jinja2"
+        block = (
+            "content" if request.args.get("only_content").lower() == "true" else None
+        )
+        return await sanic_render(template, block=block)
+
+    @app.get("/nested_content")
+    async def nested_content(request: sanic.Request):
+        return await sanic_render(
+            "nested_blocks_and_variables.html.jinja2",
+            block="content",
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+        )
+
+    @app.get("/nested_inner")
+    async def nested_inner(request: sanic.Request):
+        return await sanic_render(
+            "nested_blocks_and_variables.html.jinja2",
+            block="inner",
+            context={"lucky_number": LUCKY_NUMBER},
+        )
+
+    yield app
+
+
+@pytest.fixture(scope="session")
+def sanic_client(sanic_app: sanic.Sanic):
+    return sanic_app.test_client

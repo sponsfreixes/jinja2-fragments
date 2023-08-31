@@ -136,6 +136,35 @@ async def only_content(request: Request):
         block_name="content"
     )
 ```
+
+## Usage with Sanic
+You can use jinja2-fragments's `render()` with Sanic as a drop-in replacement of the Sanic template extension's `render()`. Your request context and environment configuration will work the same as before. You must have `sanic_ext` and `Jinja2` installed.
+
+By default, the full page is rendered (`block=None`) unless you provide a `block` keyword argument.
+
+```py
+from sanic import Sanic, Request
+import sanic_ext
+from jinja2_fragments.sanic import render
+
+app = Sanic(__name__)
+app.extend(config=sanic_ext.Config(templating_path_to_templates='path/to/templates'))
+
+@app.get('/full_page')
+async def full_page(request: Request):
+    return await render(
+        'page.html.jinja2', 
+        context={"magic_number": 42}
+    )
+
+async def only_content(request: Request):
+    return await render(
+        'page.html.jinja2',
+        block='content',
+        context={"magic_number": 42}
+    )
+```
+
 ## How to collaborate
 
 This project uses pre-commit hooks to run black, isort, pyupgrade and flake8 on each commit. To have that running
