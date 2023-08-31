@@ -27,7 +27,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="jinja2_fragments",
-    version="0.3.0",
+    version="1.0.0",
     description="Render Jinja2 template block as HTML page fragments on Python "
     "web frameworks.",
     long_description=long_description,

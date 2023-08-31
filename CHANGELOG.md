@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.0.0
+Released 2023-08-30
+* Adds support for Sanic ([PR #14](https://github.com/sponsfreixes/jinja2-fragments/pull/14)).
+* Improves FastAPI documentation ([PR #4](https://github.com/sponsfreixes/jinja2-fragments/pull/4)).
+* Fixes tests dependencies ([PR #9](https://github.com/sponsfreixes/jinja2-fragments/pull/9)).
+* Fixes Flask/Quart signal name typo ([PR #10](https://github.com/sponsfreixes/jinja2-fragments/pull/10)).
+* Fixes test for BlockNotFoundError ([PR #12](https://github.com/sponsfreixes/jinja2-fragments/pull/12)).
+* Adds GitHub actions for pre-commits and tests ([PR #13](https://github.com/sponsfreixes/jinja2-fragments/pull/13)).
+
 ## Version 0.3.0
 Released 2022-09-18
 * Adds support for FastAPI ([PR #2](https://github.com/sponsfreixes/jinja2-fragments/pull/2)).
