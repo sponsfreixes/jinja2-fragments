@@ -6,7 +6,9 @@ if sys.version_info > (3, 7):
     from sanic_testing.testing import SanicTestClient
 
 
-@pytest.mark.skipif(sys.version_info <= (3, 7))
+@pytest.mark.skipif(
+    sys.version_info <= (3, 7), reason="Sanic requires python3.8 or higher"
+)
 class TestSanicRenderBlock:
     @pytest.mark.parametrize(
         "only_content, html_name",
