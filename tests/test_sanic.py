@@ -1,7 +1,12 @@
+import sys
+
 import pytest
-from sanic_testing.testing import SanicTestClient
+
+if sys.version_info > (3, 7):
+    from sanic_testing.testing import SanicTestClient
 
 
+@pytest.mark.skipif(sys.version_info <= (3, 7))
 class TestSanicRenderBlock:
     @pytest.mark.parametrize(
         "only_content, html_name",

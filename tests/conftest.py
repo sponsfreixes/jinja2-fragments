@@ -1,11 +1,14 @@
 import pathlib
+import sys
 
 import fastapi
 import flask
 import pytest
 import quart
-import sanic
-import sanic_ext
+
+if sys.version_info > (3, 7):
+    import sanic
+    import sanic_ext
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from starlette.testclient import TestClient
 
