@@ -15,7 +15,7 @@ class TestSanicRenderBlock:
         ],
     )
     def test_simple_page(
-        self, sanic_client: SanicTestClient, get_html, only_content, html_name
+        self, sanic_client: "SanicTestClient", get_html, only_content, html_name
     ):
         _, response = sanic_client.get(
             "/simple_page", params={"only_content": only_content}
