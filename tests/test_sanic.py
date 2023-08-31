@@ -1,7 +1,11 @@
 import pytest
-from sanic_testing.testing import SanicTestClient
+from conftest import SANIC_ENABLED
+
+if SANIC_ENABLED:
+    from sanic_testing.testing import SanicTestClient
 
 
+@pytest.mark.skipif(not SANIC_ENABLED, reason="Sanic requires python 3.8 or higher")
 class TestSanicRenderBlock:
     @pytest.mark.parametrize(
         "only_content, html_name",
@@ -11,7 +15,7 @@ class TestSanicRenderBlock:
         ],
     )
     def test_simple_page(
-        self, sanic_client: SanicTestClient, get_html, only_content, html_name
+        self, sanic_client: "SanicTestClient", get_html, only_content, html_name
     ):
         _, response = sanic_client.get(
             "/simple_page", params={"only_content": only_content}
