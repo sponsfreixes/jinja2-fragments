@@ -5,17 +5,18 @@ import fastapi
 import flask
 import pytest
 import quart
-
-if sys.version_info >= (3, 8):
-    import sanic
-    import sanic_ext
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from starlette.testclient import TestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
-from jinja2_fragments.sanic import render as sanic_render
+
+if sys.version_info >= (3, 8):
+    import sanic
+    import sanic_ext
+
+    from jinja2_fragments.sanic import render as sanic_render
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
