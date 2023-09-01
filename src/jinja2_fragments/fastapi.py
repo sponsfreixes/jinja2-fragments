@@ -29,13 +29,13 @@ class Jinja2Blocks(Jinja2Templates):
         background: typing.Optional[BackgroundTask] = None,
         *,
         block_name: typing.Optional[str] = None,
-    ) -> typing.Union[_TemplateResponse, str]:
+    ) -> _TemplateResponse:
         if "request" not in context:
             raise ValueError('context must include a "request" key')
         template = self.get_template(name)
 
         if block_name:
-            return render_block(
+            template = render_block(
                 self.env,
                 name,
                 block_name,
