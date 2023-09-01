@@ -27,7 +27,7 @@ class TestFastAPIRenderBlock:
         get_html,
     ):
         response = fastapi_client.get("/simple_page_content")
-        response_text = response.text.replace('"', "").strip("\\n")
+        response_text = response.text.replace('"', "").strip("\n")
         html = get_html("simple_page_content.html").strip("\n")
         assert html == response_text
 
