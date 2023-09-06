@@ -180,7 +180,7 @@ And then run once:
 pre-commit install
 ```
 
-From now one, every time you commit your files on this project, they will be automatically processed by the tools listed
+From now on, every time you commit your files on this project, they will be automatically processed by the tools listed
 above.
 
 ## How to run tests
