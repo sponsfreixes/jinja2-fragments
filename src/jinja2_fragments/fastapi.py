@@ -2,7 +2,7 @@ import typing
 
 try:
     from starlette.background import BackgroundTask
-    from starlette.responses import HTMLResponse
+    from starlette.responses import HTMLResponse, Response
     from starlette.templating import Jinja2Templates, _TemplateResponse
 except ModuleNotFoundError as e:
     raise ModuleNotFoundError(
@@ -30,7 +30,7 @@ class Jinja2Blocks(Jinja2Templates):
         background: typing.Optional[BackgroundTask] = None,
         *,
         block_name: typing.Optional[str] = None,
-    ) -> typing.Union[_TemplateResponse, HTMLResponse]:
+    ) -> Response:
         if "request" not in context:
             raise ValueError('context must include a "request" key')
         template = self.get_template(name)
