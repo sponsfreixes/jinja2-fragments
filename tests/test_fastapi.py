@@ -53,6 +53,18 @@ class TestFastAPIRenderBlock:
         html = re.sub(r"[\s\"]*", "", html)
         assert html == response_text
 
+    def test_nested_inner_html_response_class(
+        self,
+        fastapi_client,
+        get_html,
+    ):
+        """using `response_class=HTMLResponse` should still work"""
+        response = fastapi_client.get("/nested_inner_html_response_class")
+        response_text = re.sub(r"[\s\"]*", "", response.text).replace("\\n", "")
+        html = get_html("nested_blocks_and_variables_inner.html")
+        html = re.sub(r"[\s\"]*", "", html)
+        assert html == response_text
+
     def test_exception(self, fastapi_client):
         with pytest.raises(BlockNotFoundError) as exc:
             fastapi_client.get("/invalid_block")

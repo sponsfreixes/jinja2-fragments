@@ -6,6 +6,7 @@ import flask
 import pytest
 import quart
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from starlette.responses import HTMLResponse
 from starlette.testclient import TestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
@@ -202,6 +203,20 @@ def fastapi_app():
     @_app.get("/nested_inner")
     async def nested_inner(request: fastapi.requests.Request):
         """Decorator wraps around route method and includes `block_name`
+        plus parameters `name` and `lucky_number` which are passed
+        to the template. As a result, `inner` will be rendered.
+        """
+        page_to_render = "nested_blocks_and_variables.html.jinja2"
+        return templates.TemplateResponse(
+            page_to_render,
+            {"request": request, "lucky_number": LUCKY_NUMBER},
+            block_name="inner",
+        )
+
+    @_app.get("/nested_inner_html_response_class", response_class=HTMLResponse)
+    async def nested_inner_html_response_class(request: fastapi.requests.Request):
+        """Decorator wraps around route method with
+        `response_class=HTMLResponse` and includes `block_name`
         plus parameters `name` and `lucky_number` which are passed
         to the template. As a result, `inner` will be rendered.
         """
