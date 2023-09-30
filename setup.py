@@ -7,8 +7,8 @@ requires = [
 ]
 
 tests_requires = [
+    "quart >= 0.18.0, < 0.19.0",
     "flask >= 2.1.0",
-    "quart >= 0.18.0",
     "fastapi",
     "sanic",
     "sanic_ext",
