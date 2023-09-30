@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.1.0
+Released 2023-09-30
+* Fixes tests for Sanic on Python 3.7
+* Improves FastAPI support by returning a Response object instead of string ([PR #16](https://github.com/sponsfreixes/jinja2-fragments/pull/16)).
+
 ## Version 1.0.0
 Released 2023-08-30
 * Adds support for Sanic ([PR #14](https://github.com/sponsfreixes/jinja2-fragments/pull/14)).
