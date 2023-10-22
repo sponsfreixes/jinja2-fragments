@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.2.0
+Released 2023-10-22
+* Adds support for Quart>=0.19.0 ([PR #22](https://github.com/sponsfreixes/jinja2-fragments/pull/22)).
+* Adds `py.typed` marker file as per PEP 561.
+
 ## Version 1.1.0
 Released 2023-09-30
 * Fixes tests for Sanic on Python 3.7
