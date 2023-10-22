@@ -7,11 +7,21 @@ except ModuleNotFoundError as e:
         "Install quart before using jinja2_fragments.quart"
     ) from e
 
-from quart.signals import AsyncNamespace
+try:
+    # Quart >= 0.19.0
+    from quart.signals import Namespace
+
+    CUSTOM_SIGNALj = False
+except ImportError:
+    # Quart < 0.19.0
+    from quart.signals import AsyncNamespace as Namespace
+
+    CUSTOM_SIGNAL = True
+
 
 from . import render_block_async
 
-jinja2_fragments_signals = AsyncNamespace()
+jinja2_fragments_signals = Namespace()
 before_render_template_block = jinja2_fragments_signals.signal(
     "before-render-template-block"
 )
@@ -30,13 +40,31 @@ async def render_block(
     """
     app = current_app  # type: ignore[attr-defined]
     await app.update_template_context(context)
-    await before_render_template_block.send(
-        app, template_name=template_name, block_name=block_name, context=context
-    )
+    if CUSTOM_SIGNAL:
+        await before_render_template_block.send(
+            app, template_name=template_name, block_name=block_name, context=context
+        )
+    else:
+        await before_render_template_block.send_async(
+            app,
+            _sync_wrapper=app.ensure_async,
+            template_name=template_name,
+            block_name=block_name,
+            context=context,
+        )
     rendered = await render_block_async(
         app.jinja_env, template_name, block_name, **context
     )
-    await template_block_rendered.send(
-        app, template_name=template_name, block_name=block_name, context=context
-    )
+    if CUSTOM_SIGNAL:
+        await template_block_rendered.send(
+            app, template_name=template_name, block_name=block_name, context=context
+        )
+    else:
+        await template_block_rendered.send_async(
+            app,
+            _sync_wrapper=app.ensure_async,
+            template_name=template_name,
+            block_name=block_name,
+            context=context,
+        )
     return rendered
