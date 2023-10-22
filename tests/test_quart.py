@@ -46,6 +46,9 @@ class TestQuartRenderBlock:
         assert html == response_text
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        sys.version_info < (3, 8), reason="Quart requires Python 3.8.0 or higher"
+    )
     async def test_exception(self, quart_app):
         with pytest.raises(BlockNotFoundError) as exc:
             async with quart_app.app_context():
