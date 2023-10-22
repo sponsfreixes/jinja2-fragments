@@ -14,8 +14,10 @@ class TestQuartRenderBlock:
             (True, "simple_page_content.html"),
         ],
     )
-    @pytest.mark.asynci
-    @pytest.mark.skipif(sys.version_info <= (3, 7))
+    @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        sys.version_info < (3, 8), reason="Quart requires Python 3.8.0 or higher"
+    )
     async def test_simple_page(self, quart_client, get_html, only_content, html_name):
         response = await quart_client.get(
             "/simple_page", query_string={"only_content": only_content}
@@ -33,7 +35,9 @@ class TestQuartRenderBlock:
         ],
     )
     @pytest.mark.asyncio
-    @pytest.mark.skipif(sys.version_info <= (3, 7))
+    @pytest.mark.skipif(
+        sys.version_info < (3, 8), reason="Quart requires Python 3.8.0 or higher"
+    )
     async def test_nested_page(self, quart_client, get_html, route, html_name):
         response = await quart_client.get(route)
         response_text = await response.get_data(True)
