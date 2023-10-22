@@ -11,7 +11,7 @@ try:
     # Quart >= 0.19.0
     from quart.signals import Namespace
 
-    CUSTOM_SIGNALj = False
+    CUSTOM_SIGNAL = False
 except ImportError:
     # Quart < 0.19.0
     from quart.signals import AsyncNamespace as Namespace
