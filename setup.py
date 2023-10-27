@@ -36,6 +36,7 @@ setup(
     author_email="sergi@cub3.net",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    package_data={"jinja2_fragments": ["py.typed"]},
     include_package_data=True,
     zip_safe=False,
     extras_require={"dev": dev_requires, "tests": tests_requires},
