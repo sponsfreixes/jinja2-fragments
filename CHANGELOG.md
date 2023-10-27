@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.2.1
+Released 2023-10-26
+* Adds missing `py.typed` marker file to wheels.
+
 ## Version 1.2.0
 Released 2023-10-22
 * Adds support for Quart>=0.19.0 ([PR #22](https://github.com/sponsfreixes/jinja2-fragments/pull/22)).
