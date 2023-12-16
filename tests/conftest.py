@@ -23,6 +23,7 @@ if SANIC_ENABLED:
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
+NAMES = ["Mario", "Luigi", "Wario"]
 
 
 @pytest.fixture(scope="session")

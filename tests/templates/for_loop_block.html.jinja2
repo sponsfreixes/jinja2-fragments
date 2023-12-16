@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of names</title>
+</head>
+<body>
+    <h1>This is a header</h1>
+    {% for name in names %}
+    {% block content %}
+    <p>This is a name: {{ name }}</p>
+    {% endblock %}
+    {% endfor %}
+</body>
+</html>

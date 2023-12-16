@@ -1,5 +1,5 @@
 import pytest
-from conftest import LUCKY_NUMBER, NAME
+from conftest import LUCKY_NUMBER, NAME, NAMES
 
 from jinja2_fragments import BlockNotFoundError, render_block, render_block_async
 
@@ -66,6 +66,7 @@ class TestRenderBlock:
                 "inner",
                 {"lucky_number": LUCKY_NUMBER},
             ),
+            ("for_loop_block.html.jinja2", "for_loop_block_content.html", "content", {"name": NAMES[1]}),
         ],
     )
     def test_block_render(
