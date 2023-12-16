@@ -1,10 +1,11 @@
 import pathlib
-import sys
 
 import fastapi
 import flask
 import pytest
 import quart
+import sanic
+import sanic_ext
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from starlette.responses import HTMLResponse
 from starlette.testclient import TestClient
@@ -12,14 +13,7 @@ from starlette.testclient import TestClient
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
-
-SANIC_ENABLED = sys.version_info >= (3, 8)
-
-if SANIC_ENABLED:
-    import sanic
-    import sanic_ext
-
-    from jinja2_fragments.sanic import render as sanic_render
+from jinja2_fragments.sanic import render as sanic_render
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
@@ -245,9 +239,6 @@ def fastapi_client(fastapi_app):
 
 @pytest.fixture(scope="session")
 def sanic_app():
-    if not SANIC_ENABLED:
-        return
-
     app = sanic.Sanic(__name__)
     app.extend(config=sanic_ext.Config(templating_path_to_templates="tests/templates"))
     app.ext.environment.lstrip_blocks = True
@@ -282,7 +273,4 @@ def sanic_app():
 
 @pytest.fixture(scope="session")
 def sanic_client(sanic_app: "sanic.Sanic"):
-    if not SANIC_ENABLED:
-        return
-
     return sanic_app.test_client
