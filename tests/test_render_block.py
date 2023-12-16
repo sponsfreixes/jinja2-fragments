@@ -66,7 +66,12 @@ class TestRenderBlock:
                 "inner",
                 {"lucky_number": LUCKY_NUMBER},
             ),
-            ("for_loop_block.html.jinja2", "for_loop_block_content.html", "content", {"name": NAMES[1]}),
+            (
+                "for_loop_block.html.jinja2",
+                "for_loop_block_content.html",
+                "content",
+                {"name": NAMES[1]},
+            ),
         ],
     )
     def test_block_render(
