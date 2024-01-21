@@ -289,13 +289,20 @@ def litestar_app():
     from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
     from pathlib import Path
 
+    
+    jinja_env = Environment(
+        loader=FileSystemLoader("tests/templates"),
+        autoescape=select_autoescape(("html", "jinja2")),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+    
+    
     template_config=TemplateConfig(
             directory=Path("tests/templates"),
-            engine=JinjaTemplateEngine,
+            engine=JinjaTemplateEngine.from_environment(jinja_env)
         )
     
-    template_config.engine.lstrip_blocks = True
-    template_config.engine.trim_blocks = True
 
     @litestar.get(path="/", sync_to_thread=False)
     def get_form(request: HTMXRequest) -> Template:
