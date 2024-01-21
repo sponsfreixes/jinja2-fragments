@@ -6,14 +6,17 @@ import pytest
 import quart
 import sanic
 import sanic_ext
+import litestar
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from starlette.responses import HTMLResponse
 from starlette.testclient import TestClient
+from litestar.testing import TestClient as LitestarTestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
 from jinja2_fragments.sanic import render as sanic_render
+from jinja2_fragments.litestar import LitestarHTMXTemplate
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
@@ -274,3 +277,60 @@ def sanic_app():
 @pytest.fixture(scope="session")
 def sanic_client(sanic_app: "sanic.Sanic"):
     return sanic_app.test_client
+
+
+@pytest.fixture(scope="session")
+def litestar_app():
+    from litestar.contrib.htmx.request import HTMXRequest
+    from litestar.response import Template
+
+    from litestar.contrib.jinja import JinjaTemplateEngine
+    from litestar.template.config import TemplateConfig
+    from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
+    from pathlib import Path
+
+    template_config=TemplateConfig(
+            directory=Path("tests/templates"),
+            engine=JinjaTemplateEngine,
+        )
+    
+    template_config.engine.lstrip_blocks = True
+    template_config.engine.trim_blocks = True
+
+    @litestar.get(path="/", sync_to_thread=False)
+    def get_form(request: HTMXRequest) -> Template:
+        context = {"magic_number": 45, "name": "Bob"}
+        htmx = request.htmx  #  if true will return HTMXDetails class object
+        if htmx:
+            context = {"magic_number": 42, "name": "Bob"}
+            print(htmx.current_url)
+            print("we are here")
+            return HTMXTemplate(template_name="simple_page.html.jinja2", context=context, block_name="content")
+        else:
+            return HTMXTemplate(template_name="simple_page.html.jinja2", context=context)
+        
+    @litestar.get(path="/simple_page", sync_to_thread=False)
+    def simple_page(request: HTMXRequest) -> HTMXTemplate:
+        template = "simple_page.html.jinja2"
+        if (
+            request.query_params.get("only_content")
+            and request.query_params["only_content"].lower() != "false"
+        ):
+            return HTMXTemplate(template_name=template, block_name="content")
+        else:
+            return HTMXTemplate(template_name=template, context={"name": NAME, "lucky_number": LUCKY_NUMBER})
+
+    app = litestar.Litestar(
+        route_handlers=[get_form, simple_page],
+        debug=True,
+        request_class=HTMXRequest,
+        template_config=template_config,
+    )
+
+    yield app
+
+
+@pytest.fixture(scope="session")
+def litestar_client(litestar_app):
+    client = LitestarTestClient(app=litestar_app)
+    return client
