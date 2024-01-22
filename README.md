@@ -165,7 +165,7 @@ async def only_content(request: Request):
 ```
 
 ## Usage with Litestar
-You can use jinja2-fragments' with Litestar by using the `LitestarHTMXTemplate` class. This gives you access to the `block_name` parameter when rendering the template.
+You can use Jinja2 Fragments with Litestar by using the `LitestarHTMXTemplate` class. This gives you access to the `block_name` parameter when rendering the template.
 
 By default, the full page is rendered unless you provide a `block_name` keyword argument.
 
@@ -201,7 +201,7 @@ app = Litestar(
     template_config=TemplateConfig(
         directory=Path("path/to/templates"),
         engine=JinjaTemplateEngine,
-    ),
+    )
 ```
 
 
