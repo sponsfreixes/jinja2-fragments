@@ -10,7 +10,7 @@ try:
     from litestar.utils.deprecation import warn_deprecation
     from litestar.contrib.htmx.types import PushUrlType, EventAfterType, ReSwapMethod
     from litestar.enums import MediaType
-    from litestar.exceptions import ImproperlyConfiguredException, HTTPException, LitestarException, ValidationException, NotFoundException
+    from litestar.exceptions import ImproperlyConfiguredException, LitestarException
     from litestar.connection import Request
     from litestar.background_tasks import BackgroundTask, BackgroundTasks
     from litestar.datastructures import Cookie

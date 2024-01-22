@@ -16,7 +16,6 @@ from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
 from jinja2_fragments.sanic import render as sanic_render
-from jinja2_fragments.litestar import LitestarHTMXTemplate
 
 NAME = "Guido"
 LUCKY_NUMBER = "42"
@@ -283,22 +282,21 @@ def sanic_client(sanic_app: "sanic.Sanic"):
 def litestar_app():
     from litestar.contrib.htmx.request import HTMXRequest
     from litestar.response import Template, Response
-    from litestar.exceptions import NotFoundException
     from litestar.contrib.jinja import JinjaTemplateEngine
     from litestar.template.config import TemplateConfig
     from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
     from pathlib import Path
     from jinja2_fragments.litestar import BlockNotFoundError
 
-    
+
     jinja_env = Environment(
         loader=FileSystemLoader("tests/templates"),
         autoescape=select_autoescape(("html", "jinja2")),
         trim_blocks=True,
         lstrip_blocks=True,
     )
-    
-    
+
+
     template_config=TemplateConfig(
             directory=Path("tests/templates"),
             engine=JinjaTemplateEngine.from_environment(jinja_env)
@@ -318,10 +316,12 @@ def litestar_app():
             context = {"magic_number": 42, "name": "Bob"}
             print(htmx.current_url)
             print("we are here")
-            return HTMXTemplate(template_name="simple_page.html.jinja2", context=context, block_name="content")
+            return HTMXTemplate(
+                template_name="simple_page.html.jinja2", context=context, block_name="content"
+                )
         else:
             return HTMXTemplate(template_name="simple_page.html.jinja2", context=context)
-        
+
     @litestar.get(path="/simple_page", sync_to_thread=False)
     def simple_page(request: HTMXRequest) -> HTMXTemplate:
         template = "simple_page.html.jinja2"
@@ -341,7 +341,7 @@ def litestar_app():
             context={"name": NAME, "lucky_number": LUCKY_NUMBER},
             block_name="content",
         )
-        
+
     @litestar.get(path="/nested_inner", sync_to_thread=False)
     def nested_inner(request: HTMXRequest) -> HTMXTemplate:
         return HTMXTemplate(
@@ -349,7 +349,7 @@ def litestar_app():
             context={"lucky_number": LUCKY_NUMBER},
             block_name="inner",
         )
-        
+
     @litestar.get(path="/invalid_block", sync_to_thread=False)
     def invalid_block(request: HTMXRequest) -> HTMXTemplate:
         return HTMXTemplate(

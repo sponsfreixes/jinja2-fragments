@@ -1,7 +1,4 @@
 import pytest
-from jinja2_fragments import BlockNotFoundError
-from litestar.status_codes import HTTP_200_OK
-from litestar.exceptions import NotFoundException
 
 
 class TestLitestarRenderBlock:
