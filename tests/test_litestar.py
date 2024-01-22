@@ -40,9 +40,7 @@ class TestLitestarRenderBlock:
         msg = (response.content).decode("utf-8")
 
         assert response.status_code == 401
-        assert (
-            msg
-            == '{"detail":"Validation failed for GET","extra":"Block \'invalid_block\' \
-                not found in template \'simple_page.html.jinja2\'"}'
-        )
+        assert msg == '{"detail":"Validation failed for GET","extra":\
+"Block \'invalid_block\' not found in template \'simple_page.html.jinja2\'"}'
+
 
