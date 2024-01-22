@@ -43,7 +43,7 @@ class LitestarHTMXTemplate(HTMXTemplate):
         re_target: Optional[str] = None,
         trigger_event: Optional[str] = None,
         params: Optional[Dict[str, Any]] = None,
-        after: Optional[EventAfterType] | None = None,
+        after: Optional[EventAfterType] = None,
         block_name: Optional[str] = None,
         **kwargs: Any,
     ):
