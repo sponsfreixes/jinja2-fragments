@@ -24,7 +24,7 @@ from . import render_block
 
 
 class BlockNotFoundError(LitestarException):
-    def __init__(self, block_name: str, template_name: str, message: str | None = None):
+    def __init__(self, block_name: str, template_name: str, message: Optional[str] = None):
         self.block_name = block_name
         self.template_name = template_name
         super().__init__(
@@ -98,7 +98,7 @@ class LitestarHTMXTemplate(HTMXTemplate):
         if self.template_str is not None:
             body = template_engine.render_string(self.template_str, context)
         else:
-            # cast to str b/c we know that either template_name cannot be None 
+            # cast to str b/c we know that either template_name cannot be None
             # if template_str is None
             template = template_engine.get_template(cast("str", self.template_name))
 
