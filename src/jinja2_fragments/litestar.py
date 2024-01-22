@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional, cast
+from typing import Any, Iterable, Optional, cast, Union
 
 try:
     import itertools
@@ -24,7 +24,9 @@ from . import render_block
 
 
 class BlockNotFoundError(LitestarException):
-    def __init__(self, block_name: str, template_name: str, message: Optional[str] = None):
+    def __init__(
+        self, block_name: str, template_name: str, message: Optional[str] = None
+    ):
         self.block_name = block_name
         self.template_name = template_name
         super().__init__(
@@ -36,12 +38,12 @@ class BlockNotFoundError(LitestarException):
 class LitestarHTMXTemplate(HTMXTemplate):
     def __init__(
         self,
-        push_url: PushUrlType | None = None,
-        re_swap: ReSwapMethod | None = None,
-        re_target: str | None = None,
-        trigger_event: str | None = None,
-        params: dict[str, Any] | None = None,
-        after: EventAfterType | None = None,
+        push_url: Optional[PushUrlType] = None,
+        re_swap: Optional[ReSwapMethod] = None,
+        re_target: Optional[str] = None,
+        trigger_event: Optional[str] = None,
+        params: Optional[dict[str, Any]] = None,
+        after: Optional[EventAfterType] | None = None,
         block_name: Optional[str] = None,
         **kwargs: Any,
     ):
@@ -52,16 +54,16 @@ class LitestarHTMXTemplate(HTMXTemplate):
 
     def to_asgi_response(
         self,
-        app: Litestar | None,
+        app: Optional[Litestar],
         request: Request,
         *,
-        background: BackgroundTask | BackgroundTasks | None = None,
-        cookies: Iterable[Cookie] | None = None,
-        encoded_headers: Iterable[tuple[bytes, bytes]] | None = None,
-        headers: dict[str, str] | None = None,
+        background: Union[BackgroundTask, BackgroundTasks, None] = None,
+        cookies: Optional[Iterable[Cookie]] = None,
+        encoded_headers: Optional[Iterable[tuple[bytes, bytes]]] = None,
+        headers: Optional[dict[str, str]] = None,
         is_head_response: bool = False,
-        media_type: MediaType | str | None = None,
-        status_code: int | None = None,
+        media_type: Union[MediaType, str, None] = None,
+        status_code: Optional[int] = None,
         type_encoders=None,
     ) -> ASGIResponse:
         if app is not None:
