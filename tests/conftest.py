@@ -301,7 +301,7 @@ def litestar_app():
             directory=Path("tests/templates"),
             engine=JinjaTemplateEngine.from_environment(jinja_env)
         )
-    
+
     def notfound_handler(request: HTMXRequest, exception: BlockNotFoundError) -> Response:
         return Response(
             {"detail": f"Validation failed for {request.method}", "extra": exception.detail},

@@ -111,9 +111,12 @@ class LitestarHTMXTemplate(HTMXTemplate):
                     _ = template.blocks[self.block_name]
                 except KeyError as exc:
                     # raise NotFoundException(detail=f"Block not found: {self.block_name} in {template}") from exc
-                    raise BlockNotFoundError(self.block_name, self.template_name) from exc
-                body = render_block(template_engine.engine, template, self.block_name, context)
-                print(body)
+                    raise BlockNotFoundError(
+                        self.block_name, self.template_name
+                        ) from exc
+                body = render_block(
+                    template_engine.engine, template, self.block_name, context
+                )
             else:
                 body = template.render(**context).encode(self.encoding)
 
