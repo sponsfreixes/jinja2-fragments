@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional, cast, Union
+from typing import Any, Dict, Iterable, Optional, Union, cast
 
 try:
     import itertools
@@ -42,7 +42,7 @@ class LitestarHTMXTemplate(HTMXTemplate):
         re_swap: Optional[ReSwapMethod] = None,
         re_target: Optional[str] = None,
         trigger_event: Optional[str] = None,
-        params: Optional[dict[str, Any]] = None,
+        params: Optional[Dict[str, Any]] = None,
         after: Optional[EventAfterType] | None = None,
         block_name: Optional[str] = None,
         **kwargs: Any,
@@ -60,7 +60,7 @@ class LitestarHTMXTemplate(HTMXTemplate):
         background: Union[BackgroundTask, BackgroundTasks, None] = None,
         cookies: Optional[Iterable[Cookie]] = None,
         encoded_headers: Optional[Iterable[tuple[bytes, bytes]]] = None,
-        headers: Optional[dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
         is_head_response: bool = False,
         media_type: Union[MediaType, str, None] = None,
         status_code: Optional[int] = None,

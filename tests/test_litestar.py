@@ -17,7 +17,6 @@ class TestLitestarRenderBlock:
         response = litestar_client.get(
             "/simple_page", params={"only_content": only_content}
         )
-        print(response)
 
         html = get_html(html_name)
         assert html == response.text
