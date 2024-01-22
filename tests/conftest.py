@@ -316,7 +316,7 @@ def litestar_app():
     @litestar.get(path="/", sync_to_thread=False)
     def get_form(request: HTMXRequest) -> Template:
         context = {"magic_number": 45, "name": "Bob"}
-        htmx = request.htmx  #  if true will return HTMXDetails class object
+        htmx = request.htmx
         if htmx:
             context = {"magic_number": 42, "name": "Bob"}
             print(htmx.current_url)

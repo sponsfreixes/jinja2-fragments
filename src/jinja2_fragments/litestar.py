@@ -98,7 +98,8 @@ class LitestarHTMXTemplate(HTMXTemplate):
         if self.template_str is not None:
             body = template_engine.render_string(self.template_str, context)
         else:
-            # cast to str b/c we know that either template_name cannot be None if template_str is None
+            # cast to str b/c we know that either template_name cannot be None 
+            # if template_str is None
             template = template_engine.get_template(cast("str", self.template_name))
 
             if self.block_name:
