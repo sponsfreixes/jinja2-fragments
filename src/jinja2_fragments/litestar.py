@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Optional, Union, cast, Tuple
+from typing import Any, Dict, Iterable, Optional, Tuple, Union, cast
 
 try:
     import itertools
