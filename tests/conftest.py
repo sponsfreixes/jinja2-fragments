@@ -2,15 +2,15 @@ import pathlib
 
 import fastapi
 import flask
+import litestar
 import pytest
 import quart
 import sanic
 import sanic_ext
-import litestar
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from litestar.testing import TestClient as LitestarTestClient
 from starlette.responses import HTMLResponse
 from starlette.testclient import TestClient
-from litestar.testing import TestClient as LitestarTestClient
 
 from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
@@ -280,14 +280,15 @@ def sanic_client(sanic_app: "sanic.Sanic"):
 
 @pytest.fixture(scope="session")
 def litestar_app():
-    from litestar.contrib.htmx.request import HTMXRequest
-    from litestar.response import Template, Response
-    from litestar.contrib.jinja import JinjaTemplateEngine
-    from litestar.template.config import TemplateConfig
-    from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
     from pathlib import Path
-    from jinja2_fragments.litestar import BlockNotFoundError
 
+    from litestar.contrib.htmx.request import HTMXRequest
+    from litestar.contrib.jinja import JinjaTemplateEngine
+    from litestar.response import Response, Template
+    from litestar.template.config import TemplateConfig
+
+    from jinja2_fragments.litestar import BlockNotFoundError
+    from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
 
     jinja_env = Environment(
         loader=FileSystemLoader("tests/templates"),
@@ -296,15 +297,19 @@ def litestar_app():
         lstrip_blocks=True,
     )
 
+    template_config = TemplateConfig(
+        directory=Path("tests/templates"),
+        engine=JinjaTemplateEngine.from_environment(jinja_env),
+    )
 
-    template_config=TemplateConfig(
-            directory=Path("tests/templates"),
-            engine=JinjaTemplateEngine.from_environment(jinja_env)
-        )
-
-    def notfound_handler(request: HTMXRequest, exception: BlockNotFoundError) -> Response:
+    def notfound_handler(
+        request: HTMXRequest, exception: BlockNotFoundError
+    ) -> Response:
         return Response(
-            {"detail": f"Validation failed for {request.method}", "extra": exception.detail},
+            {
+                "detail": f"Validation failed for {request.method}",
+                "extra": exception.detail,
+            },
             status_code=401,
         )
 
@@ -317,10 +322,14 @@ def litestar_app():
             print(htmx.current_url)
             print("we are here")
             return HTMXTemplate(
-                template_name="simple_page.html.jinja2", context=context, block_name="content"
-                )
+                template_name="simple_page.html.jinja2",
+                context=context,
+                block_name="content",
+            )
         else:
-            return HTMXTemplate(template_name="simple_page.html.jinja2", context=context)
+            return HTMXTemplate(
+                template_name="simple_page.html.jinja2", context=context
+            )
 
     @litestar.get(path="/simple_page", sync_to_thread=False)
     def simple_page(request: HTMXRequest) -> HTMXTemplate:
@@ -331,8 +340,10 @@ def litestar_app():
         ):
             return HTMXTemplate(template_name=template, block_name="content")
         else:
-            return HTMXTemplate(template_name=template, context={"name": NAME, "lucky_number": LUCKY_NUMBER})
-
+            return HTMXTemplate(
+                template_name=template,
+                context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            )
 
     @litestar.get(path="/nested_content", sync_to_thread=False)
     def nested_content(request: HTMXRequest) -> HTMXTemplate:
@@ -359,7 +370,13 @@ def litestar_app():
         )
 
     app = litestar.Litestar(
-        route_handlers=[get_form, simple_page, nested_content, nested_inner, invalid_block],
+        route_handlers=[
+            get_form,
+            simple_page,
+            nested_content,
+            nested_inner,
+            invalid_block,
+        ],
         debug=True,
         request_class=HTMXRequest,
         template_config=template_config,

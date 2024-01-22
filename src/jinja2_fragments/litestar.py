@@ -1,37 +1,36 @@
-from typing import Optional, Any, Iterable, cast
+from typing import Any, Iterable, Optional, cast
 
 try:
-    from litestar.contrib.htmx.response import HTMXTemplate
-    from litestar import Litestar
-    from litestar.response.base import ASGIResponse
     import itertools
     from mimetypes import guess_type
     from pathlib import PurePath
-    from litestar.utils.deprecation import warn_deprecation
-    from litestar.contrib.htmx.types import PushUrlType, EventAfterType, ReSwapMethod
+
+    from litestar import Litestar
+    from litestar.background_tasks import BackgroundTask, BackgroundTasks
+    from litestar.connection import Request
+    from litestar.contrib.htmx.response import HTMXTemplate
+    from litestar.contrib.htmx.types import EventAfterType, PushUrlType, ReSwapMethod
+    from litestar.datastructures import Cookie
     from litestar.enums import MediaType
     from litestar.exceptions import ImproperlyConfiguredException, LitestarException
-    from litestar.connection import Request
-    from litestar.background_tasks import BackgroundTask, BackgroundTasks
-    from litestar.datastructures import Cookie
+    from litestar.response.base import ASGIResponse
+    from litestar.utils.deprecation import warn_deprecation
 except ModuleNotFoundError as e:
     raise ModuleNotFoundError(
-    "Install litestar[jinja] before using jinja_fragments.litestar"
-) from e
+        "Install litestar[jinja] before using jinja_fragments.litestar"
+    ) from e
 
 from . import render_block
 
+
 class BlockNotFoundError(LitestarException):
-    def __init__(
-        self, block_name: str, template_name: str, message: str | None = None
-    ):
+    def __init__(self, block_name: str, template_name: str, message: str | None = None):
         self.block_name = block_name
         self.template_name = template_name
         super().__init__(
             message
             or f"Block {self.block_name!r} not found in template {self.template_name!r}"
         )
-
 
 
 class LitestarHTMXTemplate(HTMXTemplate):
@@ -47,15 +46,9 @@ class LitestarHTMXTemplate(HTMXTemplate):
         **kwargs: Any,
     ):
         super().__init__(
-            push_url,
-            re_swap,
-            re_target,
-            trigger_event,
-            params,
-            after,
-            **kwargs)
+            push_url, re_swap, re_target, trigger_event, params, after, **kwargs
+        )
         self.block_name = block_name
-
 
     def to_asgi_response(
         self,
@@ -69,7 +62,7 @@ class LitestarHTMXTemplate(HTMXTemplate):
         is_head_response: bool = False,
         media_type: MediaType | str | None = None,
         status_code: int | None = None,
-        type_encoders = None,
+        type_encoders=None,
     ) -> ASGIResponse:
         if app is not None:
             warn_deprecation(
@@ -83,7 +76,9 @@ class LitestarHTMXTemplate(HTMXTemplate):
             raise ImproperlyConfiguredException("Template engine is not configured")
 
         headers = {**headers, **self.headers} if headers is not None else self.headers
-        cookies = self.cookies if cookies is None else itertools.chain(self.cookies, cookies)
+        cookies = (
+            self.cookies if cookies is None else itertools.chain(self.cookies, cookies)
+        )
 
         media_type = self.media_type or media_type
         if not media_type:
@@ -110,10 +105,9 @@ class LitestarHTMXTemplate(HTMXTemplate):
                 try:
                     _ = template.blocks[self.block_name]
                 except KeyError as exc:
-                    # raise NotFoundException(detail=f"Block not found: {self.block_name} in {template}") from exc
                     raise BlockNotFoundError(
                         self.block_name, self.template_name
-                        ) from exc
+                    ) from exc
                 body = render_block(
                     template_engine.engine, template, self.block_name, context
                 )
