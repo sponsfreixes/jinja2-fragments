@@ -282,12 +282,13 @@ def sanic_client(sanic_app: "sanic.Sanic"):
 @pytest.fixture(scope="session")
 def litestar_app():
     from litestar.contrib.htmx.request import HTMXRequest
-    from litestar.response import Template
-
+    from litestar.response import Template, Response
+    from litestar.exceptions import NotFoundException
     from litestar.contrib.jinja import JinjaTemplateEngine
     from litestar.template.config import TemplateConfig
     from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
     from pathlib import Path
+    from jinja2_fragments.litestar import BlockNotFoundError
 
     
     jinja_env = Environment(
@@ -303,6 +304,11 @@ def litestar_app():
             engine=JinjaTemplateEngine.from_environment(jinja_env)
         )
     
+    def notfound_handler(request: HTMXRequest, exception: BlockNotFoundError) -> Response:
+        return Response(
+            {"detail": f"Validation failed for {request.method}", "extra": exception.detail},
+            status_code=401,
+        )
 
     @litestar.get(path="/", sync_to_thread=False)
     def get_form(request: HTMXRequest) -> Template:
@@ -327,11 +333,37 @@ def litestar_app():
         else:
             return HTMXTemplate(template_name=template, context={"name": NAME, "lucky_number": LUCKY_NUMBER})
 
+
+    @litestar.get(path="/nested_content", sync_to_thread=False)
+    def nested_content(request: HTMXRequest) -> HTMXTemplate:
+        return HTMXTemplate(
+            template_name="nested_blocks_and_variables.html.jinja2",
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_name="content",
+        )
+        
+    @litestar.get(path="/nested_inner", sync_to_thread=False)
+    def nested_inner(request: HTMXRequest) -> HTMXTemplate:
+        return HTMXTemplate(
+            template_name="nested_blocks_and_variables.html.jinja2",
+            context={"lucky_number": LUCKY_NUMBER},
+            block_name="inner",
+        )
+        
+    @litestar.get(path="/invalid_block", sync_to_thread=False)
+    def invalid_block(request: HTMXRequest) -> HTMXTemplate:
+        return HTMXTemplate(
+            template_name="simple_page.html.jinja2",
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_name="invalid_block",
+        )
+
     app = litestar.Litestar(
-        route_handlers=[get_form, simple_page],
+        route_handlers=[get_form, simple_page, nested_content, nested_inner, invalid_block],
         debug=True,
         request_class=HTMXRequest,
         template_config=template_config,
+        exception_handlers={BlockNotFoundError: notfound_handler},
     )
 
     yield app

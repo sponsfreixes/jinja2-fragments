@@ -10,7 +10,7 @@ try:
     from litestar.utils.deprecation import warn_deprecation
     from litestar.contrib.htmx.types import PushUrlType, EventAfterType, ReSwapMethod
     from litestar.enums import MediaType
-    from litestar.exceptions import ImproperlyConfiguredException
+    from litestar.exceptions import ImproperlyConfiguredException, HTTPException, LitestarException, ValidationException, NotFoundException
     from litestar.connection import Request
     from litestar.background_tasks import BackgroundTask, BackgroundTasks
     from litestar.datastructures import Cookie
@@ -20,6 +20,18 @@ except ModuleNotFoundError as e:
 ) from e
 
 from . import render_block
+
+class BlockNotFoundError(LitestarException):
+    def __init__(
+        self, block_name: str, template_name: str, message: str | None = None
+    ):
+        self.block_name = block_name
+        self.template_name = template_name
+        super().__init__(
+            message
+            or f"Block {self.block_name!r} not found in template {self.template_name!r}"
+        )
+
 
 
 class LitestarHTMXTemplate(HTMXTemplate):
@@ -93,7 +105,13 @@ class LitestarHTMXTemplate(HTMXTemplate):
         else:
             # cast to str b/c we know that either template_name cannot be None if template_str is None
             template = template_engine.get_template(cast("str", self.template_name))
+
             if self.block_name:
+                try:
+                    _ = template.blocks[self.block_name]
+                except KeyError as exc:
+                    # raise NotFoundException(detail=f"Block not found: {self.block_name} in {template}") from exc
+                    raise BlockNotFoundError(self.block_name, self.template_name) from exc
                 body = render_block(template_engine.engine, template, self.block_name, context)
                 print(body)
             else:

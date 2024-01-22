@@ -1,6 +1,7 @@
 import pytest
 from jinja2_fragments import BlockNotFoundError
 from litestar.status_codes import HTTP_200_OK
+from litestar.exceptions import NotFoundException
 
 
 class TestLitestarRenderBlock:
@@ -24,7 +25,26 @@ class TestLitestarRenderBlock:
         print(response)
 
         html = get_html(html_name)
-        response_text = response.text.replace('"', "").strip("\n")
-        html = get_html("simple_page_content.html").strip("\n")
-        assert html == response_text
+        assert html == response.text
         
+        
+    @pytest.mark.parametrize(
+        "route, html_name",
+        [
+            ("/nested_content", "nested_blocks_and_variables_content.html"),
+            ("/nested_inner", "nested_blocks_and_variables_inner.html"),
+        ],
+    )
+    def test_nested_page(self, litestar_client, get_html, route, html_name):
+        response = litestar_client.get(route)
+
+        html = get_html(html_name)
+        assert html == response.text
+        
+        
+    def test_exception(self, litestar_client):
+        response = litestar_client.get("/invalid_block")
+        msg = (response.content).decode('utf-8')
+        
+        assert response.status_code == 401
+        assert msg == '{"detail":"Validation failed for GET","extra":"Block \'invalid_block\' not found in template \'simple_page.html.jinja2\'"}'
