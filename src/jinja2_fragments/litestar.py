@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Optional, Union, cast
+from typing import Any, Dict, Iterable, Optional, Union, cast, Tuple
 
 try:
     import itertools
@@ -59,7 +59,7 @@ class LitestarHTMXTemplate(HTMXTemplate):
         *,
         background: Union[BackgroundTask, BackgroundTasks, None] = None,
         cookies: Optional[Iterable[Cookie]] = None,
-        encoded_headers: Optional[Iterable[tuple[bytes, bytes]]] = None,
+        encoded_headers: Optional[Iterable[Tuple[bytes, bytes]]] = None,
         headers: Optional[Dict[str, str]] = None,
         is_head_response: bool = False,
         media_type: Union[MediaType, str, None] = None,
