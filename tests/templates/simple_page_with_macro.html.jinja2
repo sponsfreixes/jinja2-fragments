@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>This is the title</title>
+</head>
+{% macro input(name, value='', type='text', size=20) -%}
+    <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}">
+{%- endmacro %}
+<body>
+    <h1>This is a header</h1>
+    {% block content %}
+    <p>This is the content.</p>
+    <p>{{ input('username') }}</p>
+    {% endblock %}
+</body>
+</html>

@@ -9,6 +9,7 @@ class TestFullpage:
         "template_name, html_name, params",
         [
             ("simple_page.html.jinja2", "simple_page.html", None),
+            ("simple_page_with_macro.html.jinja2", "simple_page_with_macro.html", None),
             (
                 "nested_blocks_and_variables.html.jinja2",
                 "nested_blocks_and_variables_full_page.html",
