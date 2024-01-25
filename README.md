@@ -178,18 +178,18 @@ from litestar.response import Template
 
 from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.template.config import TemplateConfig
-from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
+from jinja2_fragments.litestar import HTMXBlockTemplate
 
 
 @get('/full_page')
 def full_page(request: HTMXRequest):
-    return HTMXTemplate(
+    return HTMXBlockTemplate(
         template='page.html.jinja2',
         context={"magic_number": 42}
     )
 
 def only_content(request: HTMXRequest):
-    return HTMXTemplate(
+    return HTMXBlockTemplate(
         template='page.html.jinja2',
         block_name='content',
         context={"magic_number": 42}
@@ -199,7 +199,7 @@ app = Litestar(
     route_handlers=[full_page, only_content],
     request_class=HTMXRequest,
     template_config=TemplateConfig(
-        directory=Path("path/to/templates"),
+        directory="path/to/templates",
         engine=JinjaTemplateEngine,
     )
 ```

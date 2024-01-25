@@ -35,7 +35,7 @@ class BlockNotFoundError(LitestarException):
         )
 
 
-class LitestarHTMXTemplate(HTMXTemplate):
+class HTMXBlockTemplate(HTMXTemplate):
     def __init__(
         self,
         push_url: Optional[PushUrlType] = None,

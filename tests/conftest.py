@@ -288,7 +288,7 @@ def litestar_app():
     from litestar.template.config import TemplateConfig
 
     from jinja2_fragments.litestar import BlockNotFoundError
-    from jinja2_fragments.litestar import LitestarHTMXTemplate as HTMXTemplate
+    from jinja2_fragments.litestar import HTMXBlockTemplate
 
     jinja_env = Environment(
         loader=FileSystemLoader("tests/templates"),
@@ -321,49 +321,49 @@ def litestar_app():
             context = {"magic_number": 42, "name": "Bob"}
             print(htmx.current_url)
             print("we are here")
-            return HTMXTemplate(
+            return HTMXBlockTemplate(
                 template_name="simple_page.html.jinja2",
                 context=context,
                 block_name="content",
             )
         else:
-            return HTMXTemplate(
+            return HTMXBlockTemplate(
                 template_name="simple_page.html.jinja2", context=context
             )
 
     @litestar.get(path="/simple_page", sync_to_thread=False)
-    def simple_page(request: HTMXRequest) -> HTMXTemplate:
+    def simple_page(request: HTMXRequest) -> Template:
         template = "simple_page.html.jinja2"
         if (
             request.query_params.get("only_content")
             and request.query_params["only_content"].lower() != "false"
         ):
-            return HTMXTemplate(template_name=template, block_name="content")
+            return HTMXBlockTemplate(template_name=template, block_name="content")
         else:
-            return HTMXTemplate(
+            return HTMXBlockTemplate(
                 template_name=template,
                 context={"name": NAME, "lucky_number": LUCKY_NUMBER},
             )
 
     @litestar.get(path="/nested_content", sync_to_thread=False)
-    def nested_content(request: HTMXRequest) -> HTMXTemplate:
-        return HTMXTemplate(
+    def nested_content(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
             template_name="nested_blocks_and_variables.html.jinja2",
             context={"name": NAME, "lucky_number": LUCKY_NUMBER},
             block_name="content",
         )
 
     @litestar.get(path="/nested_inner", sync_to_thread=False)
-    def nested_inner(request: HTMXRequest) -> HTMXTemplate:
-        return HTMXTemplate(
+    def nested_inner(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
             template_name="nested_blocks_and_variables.html.jinja2",
             context={"lucky_number": LUCKY_NUMBER},
             block_name="inner",
         )
 
     @litestar.get(path="/invalid_block", sync_to_thread=False)
-    def invalid_block(request: HTMXRequest) -> HTMXTemplate:
-        return HTMXTemplate(
+    def invalid_block(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
             template_name="simple_page.html.jinja2",
             context={"name": NAME, "lucky_number": LUCKY_NUMBER},
             block_name="invalid_block",
