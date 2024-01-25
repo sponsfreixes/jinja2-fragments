@@ -287,8 +287,7 @@ def litestar_app():
     from litestar.response import Response, Template
     from litestar.template.config import TemplateConfig
 
-    from jinja2_fragments.litestar import BlockNotFoundError
-    from jinja2_fragments.litestar import HTMXBlockTemplate
+    from jinja2_fragments.litestar import BlockNotFoundError, HTMXBlockTemplate
 
     jinja_env = Environment(
         loader=FileSystemLoader("tests/templates"),
