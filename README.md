@@ -164,6 +164,47 @@ async def only_content(request: Request):
     )
 ```
 
+## Usage with Litestar
+You can use Jinja2 Fragments with Litestar by using the `LitestarHTMXTemplate` class. This gives you access to the `block_name` parameter when rendering the template.
+
+By default, the full page is rendered unless you provide a `block_name` keyword argument.
+
+```py
+from pathlib import Path
+
+from litestar.contrib.htmx.request import HTMXRequest
+from litestar import get, Litestar
+from litestar.response import Template
+
+from litestar.contrib.jinja import JinjaTemplateEngine
+from litestar.template.config import TemplateConfig
+from jinja2_fragments.litestar import HTMXBlockTemplate
+
+
+@get('/full_page')
+def full_page(request: HTMXRequest):
+    return HTMXBlockTemplate(
+        template='page.html.jinja2',
+        context={"magic_number": 42}
+    )
+
+def only_content(request: HTMXRequest):
+    return HTMXBlockTemplate(
+        template='page.html.jinja2',
+        block_name='content',
+        context={"magic_number": 42}
+    )
+
+app = Litestar(
+    route_handlers=[full_page, only_content],
+    request_class=HTMXRequest,
+    template_config=TemplateConfig(
+        directory="path/to/templates",
+        engine=JinjaTemplateEngine,
+    )
+```
+
+
 ## How to collaborate
 
 This project uses pre-commit hooks to run black, isort, pyupgrade and flake8 on each commit. To have that running

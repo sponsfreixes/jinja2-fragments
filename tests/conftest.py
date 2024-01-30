@@ -2,11 +2,13 @@ import pathlib
 
 import fastapi
 import flask
+import litestar
 import pytest
 import quart
 import sanic
 import sanic_ext
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from litestar.testing import TestClient as LitestarTestClient
 from starlette.responses import HTMLResponse
 from starlette.testclient import TestClient
 
@@ -274,3 +276,116 @@ def sanic_app():
 @pytest.fixture(scope="session")
 def sanic_client(sanic_app: "sanic.Sanic"):
     return sanic_app.test_client
+
+
+@pytest.fixture(scope="session")
+def litestar_app():
+    from pathlib import Path
+
+    from litestar.contrib.htmx.request import HTMXRequest
+    from litestar.contrib.jinja import JinjaTemplateEngine
+    from litestar.response import Response, Template
+    from litestar.template.config import TemplateConfig
+
+    from jinja2_fragments.litestar import BlockNotFoundError, HTMXBlockTemplate
+
+    jinja_env = Environment(
+        loader=FileSystemLoader("tests/templates"),
+        autoescape=select_autoescape(("html", "jinja2")),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+
+    template_config = TemplateConfig(
+        directory=Path("tests/templates"),
+        engine=JinjaTemplateEngine.from_environment(jinja_env),
+    )
+
+    def notfound_handler(
+        request: HTMXRequest, exception: BlockNotFoundError
+    ) -> Response:
+        return Response(
+            {
+                "detail": f"Validation failed for {request.method}",
+                "extra": exception.detail,
+            },
+            status_code=401,
+        )
+
+    @litestar.get(path="/", sync_to_thread=False)
+    def get_form(request: HTMXRequest) -> Template:
+        context = {"magic_number": 45, "name": "Bob"}
+        htmx = request.htmx
+        if htmx:
+            context = {"magic_number": 42, "name": "Bob"}
+            print(htmx.current_url)
+            print("we are here")
+            return HTMXBlockTemplate(
+                template_name="simple_page.html.jinja2",
+                context=context,
+                block_name="content",
+            )
+        else:
+            return HTMXBlockTemplate(
+                template_name="simple_page.html.jinja2", context=context
+            )
+
+    @litestar.get(path="/simple_page", sync_to_thread=False)
+    def simple_page(request: HTMXRequest) -> Template:
+        template = "simple_page.html.jinja2"
+        if (
+            request.query_params.get("only_content")
+            and request.query_params["only_content"].lower() != "false"
+        ):
+            return HTMXBlockTemplate(template_name=template, block_name="content")
+        else:
+            return HTMXBlockTemplate(
+                template_name=template,
+                context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            )
+
+    @litestar.get(path="/nested_content", sync_to_thread=False)
+    def nested_content(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
+            template_name="nested_blocks_and_variables.html.jinja2",
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_name="content",
+        )
+
+    @litestar.get(path="/nested_inner", sync_to_thread=False)
+    def nested_inner(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
+            template_name="nested_blocks_and_variables.html.jinja2",
+            context={"lucky_number": LUCKY_NUMBER},
+            block_name="inner",
+        )
+
+    @litestar.get(path="/invalid_block", sync_to_thread=False)
+    def invalid_block(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
+            template_name="simple_page.html.jinja2",
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_name="invalid_block",
+        )
+
+    app = litestar.Litestar(
+        route_handlers=[
+            get_form,
+            simple_page,
+            nested_content,
+            nested_inner,
+            invalid_block,
+        ],
+        debug=True,
+        request_class=HTMXRequest,
+        template_config=template_config,
+        exception_handlers={BlockNotFoundError: notfound_handler},
+    )
+
+    yield app
+
+
+@pytest.fixture(scope="session")
+def litestar_client(litestar_app):
+    client = LitestarTestClient(app=litestar_app)
+    return client

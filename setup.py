@@ -16,6 +16,7 @@ tests_requires = [
     "starlette[full]",
     "pytest",
     "pytest_asyncio",
+    "litestar[standard]",
 ]
 
 dev_requires = [
