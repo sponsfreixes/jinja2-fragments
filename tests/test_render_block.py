@@ -56,6 +56,12 @@ class TestRenderBlock:
         [
             ("simple_page.html.jinja2", "simple_page_content.html", "content", None),
             (
+                "simple_page_with_macro.html.jinja2",
+                "simple_page_with_macro_content.html",
+                "content",
+                None,
+            ),
+            (
                 "nested_blocks_and_variables.html.jinja2",
                 "nested_blocks_and_variables_content.html",
                 "content",
