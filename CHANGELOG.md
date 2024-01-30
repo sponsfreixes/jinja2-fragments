@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.3.0
+Released 2024-01-29
+* Adds support for Litestar ([PR #26](https://github.com/sponsfreixes/jinja2-fragments/pull/26)).
+* Drops support for Python 3.7.
+
 ## Version 1.2.1
 Released 2023-10-26
 * Adds missing `py.typed` marker file to wheels.
