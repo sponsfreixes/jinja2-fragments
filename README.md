@@ -156,6 +156,7 @@ async def full_page(request: Request):
         context={"magic_number": 42}
     )
 
+@app.get("/only_content")
 async def only_content(request: Request):
     return await render(
         'page.html.jinja2',
@@ -170,8 +171,6 @@ You can use Jinja2 Fragments with Litestar by using the `LitestarHTMXTemplate` c
 By default, the full page is rendered unless you provide a `block_name` keyword argument.
 
 ```py
-from pathlib import Path
-
 from litestar.contrib.htmx.request import HTMXRequest
 from litestar import get, Litestar
 from litestar.response import Template
@@ -182,15 +181,16 @@ from jinja2_fragments.litestar import HTMXBlockTemplate
 
 
 @get('/full_page')
-def full_page(request: HTMXRequest):
+def full_page(request: HTMXRequest) -> Template:
     return HTMXBlockTemplate(
-        template='page.html.jinja2',
+        template_name='page.html.jinja2',
         context={"magic_number": 42}
     )
 
-def only_content(request: HTMXRequest):
+@get('/only_content')
+def only_content(request: HTMXRequest) -> Template:
     return HTMXBlockTemplate(
-        template='page.html.jinja2',
+        template_name='page.html.jinja2',
         block_name='content',
         context={"magic_number": 42}
     )
@@ -202,6 +202,7 @@ app = Litestar(
         directory="path/to/templates",
         engine=JinjaTemplateEngine,
     )
+)
 ```
 
 
