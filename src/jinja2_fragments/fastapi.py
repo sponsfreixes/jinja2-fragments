@@ -23,7 +23,7 @@ class Jinja2Blocks(Jinja2Templates):
     def TemplateResponse(
         self,
         name: str,
-        context: dict[str, typing.Any],
+        context: typing.Dict[str, typing.Any],
         status_code: int = 200,
         headers: typing.Optional[typing.Mapping[str, str]] = None,
         media_type: typing.Optional[str] = None,
