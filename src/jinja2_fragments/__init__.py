@@ -1,6 +1,7 @@
 import typing
 
 from jinja2 import Environment
+from jinja2.runtime import Macro
 
 
 class BlockNotFoundError(Exception):
@@ -36,7 +37,9 @@ async def render_block_async(
     except KeyError:
         raise BlockNotFoundError(block_name, template_name)
 
-    ctx = template.new_context(dict(*args, **kwargs))
+    template_module = template.module
+    macros = {m: getattr(template_module, m) for m in dir(template_module) if isinstance(getattr(template_module, m), Macro)}
+    ctx = template.new_context(vars=dict(*args, **kwargs), locals=macros)
     try:
         return environment.concat(  # type: ignore
             [n async for n in block_render_func(ctx)]  # type: ignore
@@ -80,7 +83,9 @@ def render_block(
     except KeyError:
         raise BlockNotFoundError(block_name, template_name)
 
-    ctx = template.new_context(dict(*args, **kwargs))
+    template_module = template.module
+    macros = {m: getattr(template_module, m) for m in dir(template_module) if isinstance(getattr(template_module, m), Macro)}
+    ctx = template.new_context(vars=dict(*args, **kwargs), locals=macros)
     try:
         return environment.concat(block_render_func(ctx))  # type: ignore
     except Exception:
