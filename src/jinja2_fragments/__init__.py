@@ -38,7 +38,11 @@ async def render_block_async(
         raise BlockNotFoundError(block_name, template_name)
 
     template_module = template.module
-    macros = {m: getattr(template_module, m) for m in dir(template_module) if isinstance(getattr(template_module, m), Macro)}
+    macros = {
+        m: getattr(template_module, m)
+        for m in dir(template_module)
+        if isinstance(getattr(template_module, m), Macro)
+    }
     ctx = template.new_context(vars=dict(*args, **kwargs), locals=macros)
     try:
         return environment.concat(  # type: ignore
@@ -84,7 +88,11 @@ def render_block(
         raise BlockNotFoundError(block_name, template_name)
 
     template_module = template.module
-    macros = {m: getattr(template_module, m) for m in dir(template_module) if isinstance(getattr(template_module, m), Macro)}
+    macros = {
+        m: getattr(template_module, m)
+        for m in dir(template_module)
+        if isinstance(getattr(template_module, m), Macro)
+    }
     ctx = template.new_context(vars=dict(*args, **kwargs), locals=macros)
     try:
         return environment.concat(block_render_func(ctx))  # type: ignore
