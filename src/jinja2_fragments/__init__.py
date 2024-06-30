@@ -37,7 +37,7 @@ async def render_block_async(
     except KeyError:
         raise BlockNotFoundError(block_name, template_name)
 
-    template_module = template.module
+    template_module = await template.make_module_async()
     macros = {
         m: getattr(template_module, m)
         for m in dir(template_module)
