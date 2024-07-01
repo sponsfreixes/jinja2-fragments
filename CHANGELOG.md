@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.4.0
+Released 2024-06-30
+* Adds support for Jinja macros ([PR #30](https://github.com/sponsfreixes/jinja2-fragments/pull/30)).
+
 ## Version 1.3.0
 Released 2024-01-29
 * Adds support for Litestar ([PR #26](https://github.com/sponsfreixes/jinja2-fragments/pull/26)).
