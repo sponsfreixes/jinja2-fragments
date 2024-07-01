@@ -1,0 +1,22 @@
+{% macro render_fieldset(legend) %}
+    <fieldset>
+        <legend>{{ legend }}</legend>
+        {{ caller() }}
+    </fieldset>
+{% endmacro %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>This is a header</h1>
+    {% block content %}
+        {% call render_fieldset(legend) %}
+        <p>This is the content. Hello {{ name }}!</p>
+        <p>This is the bottom paragraph. Lucky number: {{ lucky_number }}</p>
+        {% endcall  %}
+    {% endblock %}
+</body>
+</html>

@@ -66,6 +66,17 @@ class TestRenderBlock:
                 "inner",
                 {"lucky_number": LUCKY_NUMBER},
             ),
+            (
+                "block_with_macros.html.jinja2",
+                "block_with_macros_content.html",
+                "content",
+                {
+                    "title": "This is a title",
+                    "name": NAME,
+                    "lucky_number": LUCKY_NUMBER,
+                    "legend": "The Legend",
+                },
+            ),
         ],
     )
     def test_block_render(
@@ -126,6 +137,17 @@ class TestAsyncRenderBlock:
                 "nested_blocks_and_variables_inner.html",
                 "inner",
                 {"lucky_number": LUCKY_NUMBER},
+            ),
+            (
+                "block_with_macros.html.jinja2",
+                "block_with_macros_content.html",
+                "content",
+                {
+                    "title": "This is a title",
+                    "name": NAME,
+                    "lucky_number": LUCKY_NUMBER,
+                    "legend": "The Legend",
+                },
             ),
         ],
     )
