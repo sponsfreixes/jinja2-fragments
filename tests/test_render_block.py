@@ -165,7 +165,6 @@ class TestAsyncRenderBlock:
                 "block_with_dictionary_content.html",
                 "content",
                 {
-                    "title": "This is a title",
                     "test_dict": {
                         "name": NAME,
                         "lucky_number": LUCKY_NUMBER,
