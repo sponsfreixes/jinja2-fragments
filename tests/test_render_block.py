@@ -77,6 +77,17 @@ class TestRenderBlock:
                     "legend": "The Legend",
                 },
             ),
+            (
+                "block_with_dictionary.html.jinja2",
+                "block_with_dictionary_content.html",
+                "content",
+                {
+                    "test_dict": {
+                        "name": NAME,
+                        "lucky_number": LUCKY_NUMBER,
+                    },
+                },
+            ),
         ],
     )
     def test_block_render(
@@ -147,6 +158,18 @@ class TestAsyncRenderBlock:
                     "name": NAME,
                     "lucky_number": LUCKY_NUMBER,
                     "legend": "The Legend",
+                },
+            ),
+            (
+                "block_with_dictionary.html.jinja2",
+                "block_with_dictionary_content.html",
+                "content",
+                {
+                    "title": "This is a title",
+                    "test_dict": {
+                        "name": NAME,
+                        "lucky_number": LUCKY_NUMBER,
+                    },
                 },
             ),
         ],

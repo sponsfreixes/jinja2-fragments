@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>This is a header</h1>
+    {% block content %}
+        {% for key, val in test_dict.items() %}
+            {{ key }} = {{ val }}
+        {% endfor  %}
+    {% endblock %}
+</body>
+</html>
