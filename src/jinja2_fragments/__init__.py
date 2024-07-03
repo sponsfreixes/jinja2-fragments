@@ -37,7 +37,7 @@ async def render_block_async(
     except KeyError:
         raise BlockNotFoundError(block_name, template_name)
 
-    template_module = await template.make_module_async()
+    template_module = await template.make_module_async(vars=dict(*args, **kwargs))
     macros = {
         m: getattr(template_module, m)
         for m in dir(template_module)
@@ -87,7 +87,7 @@ def render_block(
     except KeyError:
         raise BlockNotFoundError(block_name, template_name)
 
-    template_module = template.module
+    template_module = template.make_module(vars=dict(*args, **kwargs))
     macros = {
         m: getattr(template_module, m)
         for m in dir(template_module)
