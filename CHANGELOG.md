@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.4.1
+Released 2024-07-03
+* Fixes regression: dictionary access ([PR #33](https://github.com/sponsfreixes/jinja2-fragments/pull/33)).
+
 ## Version 1.4.0
 Released 2024-06-30
 * Adds support for Jinja macros ([PR #30](https://github.com/sponsfreixes/jinja2-fragments/pull/30)).
