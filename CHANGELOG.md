@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.5.0
+Released 2024-07-06
+* Removes support for Jinja macros. This feature introduced a bug that breaks some complex templates. See discussion on [Issue #21](https://github.com/sponsfreixes/jinja2-fragments/issues/21).
+
 ## Version 1.4.1
 Released 2024-07-03
 * Fixes regression: dictionary access ([PR #33](https://github.com/sponsfreixes/jinja2-fragments/pull/33)).
