@@ -1,0 +1,8 @@
+{% extends "simple_page.html.jinja2" %}
+
+{% block content %}
+<p>This is the content. Hello {{ name }}!</p>
+{% endblock %}
+{% block oob_content %}
+<p>This is an out-of-bound update. Lucky number: {{ lucky_number }}</p>
+{% endblock %}

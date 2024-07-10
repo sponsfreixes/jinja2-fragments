@@ -1,7 +1,12 @@
 import pytest
 from conftest import LUCKY_NUMBER, NAME
 
-from jinja2_fragments import BlockNotFoundError, render_block, render_block_async
+from jinja2_fragments import (
+    BlockNotFoundError,
+    render_block,
+    render_block_async,
+    render_block_list,
+)
 
 
 class TestFullpage:
@@ -80,6 +85,37 @@ class TestRenderBlock:
 
         html = get_html(html_name)
         assert html == rendered
+
+    @pytest.mark.parametrize(
+        "template_name, html_name, block_list, params",
+        [
+            ("simple_page.html.jinja2", "simple_page_content.html", ["content"], None),
+            (
+                "oob_block_and_variables.html.jinja2",
+                "oob_block_and_variables_content.html",
+                ["content"],
+                {"name": NAME},
+            ),
+            (
+                "oob_block_and_variables.html.jinja2",
+                "oob_block_and_variables_content_and_oob.html",
+                ["content", "oob_content"],
+                {"name": NAME, "lucky_number": LUCKY_NUMBER},
+            ),
+        ],
+    )
+    def test_block_list_render(
+        self, environment, get_html, template_name, html_name, block_list, params
+    ):
+        """Test that the block_list_render function works."""
+        rendered = (
+            render_block_list(environment, template_name, block_list, params)
+            if params
+            else render_block_list(environment, template_name, block_list)
+        )
+
+        html = get_html(html_name)
+        assert html.strip() == rendered.strip()
 
     @pytest.mark.parametrize(
         "template_name, html_name, block, params",
