@@ -53,6 +53,17 @@ class TestFastAPIRenderBlock:
         html = re.sub(r"[\s\"]*", "", html)
         assert html == response_text
 
+    def test_out_of_band_update(
+        self,
+        fastapi_client,
+        get_html,
+    ):
+        response = fastapi_client.get("/out_of_band_block")
+        response_text = re.sub(r"[\s\"]*", "", response.text).replace("\\n", "")
+        html = get_html("oob_block_and_variables_content_and_oob.html")
+        html = re.sub(r"[\s\"]*", "", html)
+        assert html == response_text
+
     def test_nested_inner_html_response_class(
         self,
         fastapi_client,
@@ -68,6 +79,13 @@ class TestFastAPIRenderBlock:
     def test_exception(self, fastapi_client):
         with pytest.raises(BlockNotFoundError) as exc:
             fastapi_client.get("/invalid_block")
+
+        assert exc.value.block_name == "invalid_block"
+        assert exc.value.template_name == "simple_page.html.jinja2"
+
+    def test_exception_block_list(self, fastapi_client):
+        with pytest.raises(BlockNotFoundError) as exc:
+            fastapi_client.get("/invalid_block_list")
 
         assert exc.value.block_name == "invalid_block"
         assert exc.value.template_name == "simple_page.html.jinja2"

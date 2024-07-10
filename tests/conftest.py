@@ -223,11 +223,35 @@ def fastapi_app():
             block_name="inner",
         )
 
+    @_app.get("/out_of_band_block")
+    async def out_of_band_block(
+        request: fastapi.requests.Request,
+    ):
+        """Decorator wraps around route method and includes `block_name_list`
+        parameter, so it will render content within all given blocks.
+        """
+        page_to_render = "oob_block_and_variables.html.jinja2"
+        return templates.TemplateResponse(
+            page_to_render,
+            {"request": request, "name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_name_list=["content", "oob_content"],
+        )
+
     @_app.get("/invalid_block")
     async def invalid_block(request: fastapi.requests.Request):
         """Decorator wraps around route method and includes an unexisting block name."""
         return templates.TemplateResponse(
             "simple_page.html.jinja2", {"request": request}, block_name="invalid_block"
+        )
+
+    @_app.get("/invalid_block_list")
+    async def invalid_block_list(request: fastapi.requests.Request):
+        """Decorator wraps around route method and includes an unexisting block name
+        passed as a list argument."""
+        return templates.TemplateResponse(
+            "simple_page.html.jinja2",
+            {"request": request},
+            block_name_list=["invalid_block"],
         )
 
     return _app
