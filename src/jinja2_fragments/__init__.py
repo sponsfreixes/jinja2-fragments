@@ -87,10 +87,10 @@ def render_block(
         environment.handle_exception()
 
 
-def render_block_list(
+def render_blocks(
     environment: Environment,
     template_name: str,
-    block_name_list: list[str],
+    block_names: list[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -113,21 +113,21 @@ def render_block_list(
                 loop.close()
 
     return _render_template_blocks(
-        environment, template_name, block_name_list, *args, **kwargs
+        environment, template_name, block_names, *args, **kwargs
     )
 
 
 def _render_template_blocks(
     environment: Environment,
     template_name: str,
-    block_name_list: list[str],
+    block_names: list[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
     contents: list[str] = []
     template = environment.get_template(template_name)
 
-    for block_name in block_name_list:
+    for block_name in block_names:
         try:
             block_render_func = template.blocks[block_name]
         except KeyError:

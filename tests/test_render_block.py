@@ -5,7 +5,7 @@ from jinja2_fragments import (
     BlockNotFoundError,
     render_block,
     render_block_async,
-    render_block_list,
+    render_blocks,
 )
 
 
@@ -87,7 +87,7 @@ class TestRenderBlock:
         assert html == rendered
 
     @pytest.mark.parametrize(
-        "template_name, html_name, block_list, params",
+        "template_name, html_name, blocks, params",
         [
             ("simple_page.html.jinja2", "simple_page_content.html", ["content"], None),
             (
@@ -104,14 +104,14 @@ class TestRenderBlock:
             ),
         ],
     )
-    def test_block_list_render(
-        self, environment, get_html, template_name, html_name, block_list, params
+    def test_render_blocks(
+        self, environment, get_html, template_name, html_name, blocks, params
     ):
-        """Test that the block_list_render function works."""
+        """Test that the render_blocks function works."""
         rendered = (
-            render_block_list(environment, template_name, block_list, params)
+            render_blocks(environment, template_name, blocks, params)
             if params
-            else render_block_list(environment, template_name, block_list)
+            else render_blocks(environment, template_name, blocks)
         )
 
         html = get_html(html_name)

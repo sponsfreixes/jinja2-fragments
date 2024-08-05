@@ -9,7 +9,7 @@ except ModuleNotFoundError as e:
         "Install Starlette to use jinja2_fragments.fastapi"
     ) from e
 
-from . import render_block, render_block_list
+from . import render_block, render_blocks
 
 
 class InvalidContextError(Exception):
@@ -30,7 +30,7 @@ class Jinja2Blocks(Jinja2Templates):
         media_type: typing.Optional[str] = None,
         background: typing.Optional[BackgroundTask] = None,
         *,
-        block_name_list: list[str] = [],
+        block_names: list[str] = [],
     ) -> Response:
         ...
 
@@ -63,7 +63,7 @@ class Jinja2Blocks(Jinja2Templates):
         template = self.get_template(name)
 
         block_name = kwargs.get("block_name", None)
-        block_name_list = kwargs.get("block_name_list", [])
+        block_names = kwargs.get("block_names", [])
 
         if block_name:
             content = render_block(
@@ -80,11 +80,11 @@ class Jinja2Blocks(Jinja2Templates):
                 background=background,
             )
 
-        if block_name_list:
-            content = render_block_list(
+        if block_names:
+            content = render_blocks(
                 self.env,
                 name,
-                block_name_list,
+                block_names,
                 context,
             )
             return HTMLResponse(

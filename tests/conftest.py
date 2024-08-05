@@ -227,14 +227,14 @@ def fastapi_app():
     async def out_of_band_block(
         request: fastapi.requests.Request,
     ):
-        """Decorator wraps around route method and includes `block_name_list`
+        """Decorator wraps around route method and includes `block_names`
         parameter, so it will render content within all given blocks.
         """
         page_to_render = "oob_block_and_variables.html.jinja2"
         return templates.TemplateResponse(
             page_to_render,
             {"request": request, "name": NAME, "lucky_number": LUCKY_NUMBER},
-            block_name_list=["content", "oob_content"],
+            block_names=["content", "oob_content"],
         )
 
     @_app.get("/invalid_block")
@@ -251,7 +251,7 @@ def fastapi_app():
         return templates.TemplateResponse(
             "simple_page.html.jinja2",
             {"request": request},
-            block_name_list=["invalid_block"],
+            block_names=["invalid_block"],
         )
 
     return _app
