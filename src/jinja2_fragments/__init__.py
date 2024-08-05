@@ -1,4 +1,5 @@
 import typing
+from asyncio import AbstractEventLoop
 
 from jinja2 import Environment
 
@@ -54,15 +55,7 @@ def render_block(
 ) -> str:
     """This returns the rendered template block as a string."""
     if environment.is_async:
-        import asyncio
-
-        close = False
-
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            close = True
+        loop, close = _get_loop()
 
         try:
             return loop.run_until_complete(
@@ -139,3 +132,15 @@ def _render_template_blocks(
         except Exception:
             environment.handle_exception()
     return "".join(contents)
+
+
+def _get_loop() -> tuple[AbstractEventLoop, bool]:
+    import asyncio
+
+    close = False
+
+    try:
+        return (asyncio.get_running_loop(), close)
+    except RuntimeError:
+        close = True
+        return (asyncio.new_event_loop(), close)
