@@ -46,6 +46,26 @@ async def render_block_async(
         return environment.handle_exception()
 
 
+async def render_blocks_async(
+    environment: Environment,
+    template_name: str,
+    block_names: list[str],
+    *args: typing.Any,
+    **kwargs: typing.Any,
+):
+    """
+    This works similar to :func:`render_blocks` but returns a coroutine that when
+    awaited returns every rendered template block as a single string. This requires
+    the environment async feature to be enabled.
+    """
+    if not environment.is_async:
+        raise RuntimeError("The environment was not created with async mode enabled.")
+
+    return _render_template_blocks_async(
+        environment, template_name, block_names, *args, **kwargs
+    )
+
+
 def render_block(
     environment: Environment,
     template_name: str,
@@ -89,18 +109,14 @@ def render_blocks(
 ) -> str:
     """This returns one or more rendered template blocks as a string."""
     if environment.is_async:
-        import asyncio
-
-        close = False
+        loop, close = _get_loop()
 
         try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            close = True
-
-        try:
-            raise NotImplementedError()
+            return loop.run_until_complete(
+                render_blocks_async(
+                    environment, template_name, block_names, *args, **kwargs
+                )
+            )
         finally:
             if close:
                 loop.close()
@@ -129,6 +145,37 @@ def _render_template_blocks(
         ctx = template.new_context(dict(*args, **kwargs))
         try:
             contents.append(environment.concat(block_render_func(ctx)))  # type: ignore
+        except Exception:
+            environment.handle_exception()
+    return "".join(contents)
+
+
+async def _render_template_blocks_async(
+    environment: Environment,
+    template_name: str,
+    block_names: list[str],
+    *args: typing.Any,
+    **kwargs: typing.Any,
+) -> str:
+    if not environment.is_async:
+        raise RuntimeError("The environment was not created with async mode enabled.")
+
+    contents: list[str] = []
+    template = environment.get_template(template_name)
+
+    for block_name in block_names:
+        try:
+            block_render_func = template.blocks[block_name]
+        except KeyError:
+            raise BlockNotFoundError(block_name, template_name)
+
+        ctx = template.new_context(dict(*args, **kwargs))
+        try:
+            contents.append(
+                environment.concat(  # type: ignore
+                    [n async for n in block_render_func(ctx)]  # type: ignore
+                )
+            )
         except Exception:
             environment.handle_exception()
     return "".join(contents)
