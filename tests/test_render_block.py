@@ -168,7 +168,6 @@ class TestAsyncRenderBlock:
     )
     async def test_async_render_block(
         self,
-        event_loop,
         async_environment,
         get_html,
         template_name,
@@ -207,7 +206,6 @@ class TestAsyncRenderBlock:
     )
     async def test_async_blocks_render(
         self,
-        event_loop,
         async_environment,
         get_html,
         template_name,
