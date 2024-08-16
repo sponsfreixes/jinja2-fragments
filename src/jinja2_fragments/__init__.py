@@ -52,7 +52,7 @@ async def render_blocks_async(
     block_names: list[str],
     *args: typing.Any,
     **kwargs: typing.Any,
-):
+) -> str:
     """
     This works similar to :func:`render_blocks` but returns a coroutine that when
     awaited returns every rendered template block as a single string. This requires
@@ -61,7 +61,7 @@ async def render_blocks_async(
     if not environment.is_async:
         raise RuntimeError("The environment was not created with async mode enabled.")
 
-    return _render_template_blocks_async(
+    return await _render_template_blocks_async(
         environment, template_name, block_names, *args, **kwargs
     )
 
