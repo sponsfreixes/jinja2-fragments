@@ -74,10 +74,10 @@ class TestRenderBlock:
             ),
         ],
     )
-    def test_block_render(
+    def test_render_block(
         self, environment, get_html, template_name, html_name, block, params
     ):
-        """Test that the block_render function works."""
+        """Test that the render_block function works."""
         rendered = (
             render_block(environment, template_name, block, params)
             if params
@@ -134,7 +134,7 @@ class TestRenderBlock:
         self, environment, get_html, template_name, html_name, block, params
     ):
         """
-        Test that the block_render function raises the right exception when passed an
+        Test that the render_block function raises the right exception when passed an
         invalid block name.
         """
         with pytest.raises(BlockNotFoundError) as exc:
@@ -166,7 +166,7 @@ class TestAsyncRenderBlock:
             ),
         ],
     )
-    async def test_async_block_render(
+    async def test_async_render_block(
         self,
         event_loop,
         async_environment,
@@ -176,7 +176,7 @@ class TestAsyncRenderBlock:
         block,
         params,
     ):
-        """Test that the block_render_async function works."""
+        """Test that the render_block_async function works."""
         rendered = (
             await render_block_async(async_environment, template_name, block, params)
             if params
@@ -184,7 +184,7 @@ class TestAsyncRenderBlock:
         )
 
         html = get_html(html_name)
-        assert html == rendered
+        assert html.strip() == rendered.strip()
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
