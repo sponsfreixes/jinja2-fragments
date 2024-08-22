@@ -9,7 +9,7 @@ except ModuleNotFoundError as e:
         "Install Starlette to use jinja2_fragments.fastapi"
     ) from e
 
-from . import render_block
+from . import render_block, render_blocks
 
 
 class InvalidContextError(Exception):
@@ -20,6 +20,21 @@ class Jinja2Blocks(Jinja2Templates):
     def __init__(self, directory, **env_options):
         super().__init__(directory, **env_options)
 
+    @typing.overload  # type: ignore
+    def TemplateResponse(
+        self,
+        name: str,
+        context: typing.Dict[str, typing.Any],
+        status_code: int = 200,
+        headers: typing.Optional[typing.Mapping[str, str]] = None,
+        media_type: typing.Optional[str] = None,
+        background: typing.Optional[BackgroundTask] = None,
+        *,
+        block_names: list[str] = [],
+    ) -> Response:
+        ...
+
+    @typing.overload
     def TemplateResponse(
         self,
         name: str,
@@ -31,9 +46,24 @@ class Jinja2Blocks(Jinja2Templates):
         *,
         block_name: typing.Optional[str] = None,
     ) -> Response:
+        ...
+
+    def TemplateResponse(
+        self,
+        name: str,
+        context: typing.Dict[str, typing.Any],
+        status_code: int = 200,
+        headers: typing.Optional[typing.Mapping[str, str]] = None,
+        media_type: typing.Optional[str] = None,
+        background: typing.Optional[BackgroundTask] = None,
+        **kwargs: typing.Any,
+    ) -> Response:
         if "request" not in context:
             raise ValueError('context must include a "request" key')
         template = self.get_template(name)
+
+        block_name = kwargs.get("block_name", None)
+        block_names = kwargs.get("block_names", [])
 
         if block_name:
             content = render_block(
@@ -49,6 +79,22 @@ class Jinja2Blocks(Jinja2Templates):
                 media_type=media_type,
                 background=background,
             )
+
+        if block_names:
+            content = render_blocks(
+                self.env,
+                name,
+                block_names,
+                context,
+            )
+            return HTMLResponse(
+                content=content,
+                status_code=status_code,
+                headers=headers,
+                media_type=media_type,
+                background=background,
+            )
+
         return _TemplateResponse(
             template,
             context,

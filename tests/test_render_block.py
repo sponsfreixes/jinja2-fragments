@@ -1,7 +1,13 @@
 import pytest
 from conftest import LUCKY_NUMBER, NAME
 
-from jinja2_fragments import BlockNotFoundError, render_block, render_block_async
+from jinja2_fragments import (
+    BlockNotFoundError,
+    render_block,
+    render_block_async,
+    render_blocks,
+    render_blocks_async,
+)
 
 
 class TestFullpage:
@@ -68,10 +74,10 @@ class TestRenderBlock:
             ),
         ],
     )
-    def test_block_render(
+    def test_render_block(
         self, environment, get_html, template_name, html_name, block, params
     ):
-        """Test that the block_render function works."""
+        """Test that the render_block function works."""
         rendered = (
             render_block(environment, template_name, block, params)
             if params
@@ -80,6 +86,37 @@ class TestRenderBlock:
 
         html = get_html(html_name)
         assert html == rendered
+
+    @pytest.mark.parametrize(
+        "template_name, html_name, blocks, params",
+        [
+            ("simple_page.html.jinja2", "simple_page_content.html", ["content"], None),
+            (
+                "oob_block_and_variables.html.jinja2",
+                "oob_block_and_variables_content.html",
+                ["content"],
+                {"name": NAME},
+            ),
+            (
+                "oob_block_and_variables.html.jinja2",
+                "oob_block_and_variables_content_and_oob.html",
+                ["content", "oob_content"],
+                {"name": NAME, "lucky_number": LUCKY_NUMBER},
+            ),
+        ],
+    )
+    def test_render_blocks(
+        self, environment, get_html, template_name, html_name, blocks, params
+    ):
+        """Test that the render_blocks function works."""
+        rendered = (
+            render_blocks(environment, template_name, blocks, params)
+            if params
+            else render_blocks(environment, template_name, blocks)
+        )
+
+        html = get_html(html_name)
+        assert html.strip() == rendered.strip()
 
     @pytest.mark.parametrize(
         "template_name, html_name, block, params",
@@ -97,7 +134,7 @@ class TestRenderBlock:
         self, environment, get_html, template_name, html_name, block, params
     ):
         """
-        Test that the block_render function raises the right exception when passed an
+        Test that the render_block function raises the right exception when passed an
         invalid block name.
         """
         with pytest.raises(BlockNotFoundError) as exc:
@@ -129,9 +166,8 @@ class TestAsyncRenderBlock:
             ),
         ],
     )
-    async def test_async_block_render(
+    async def test_async_render_block(
         self,
-        event_loop,
         async_environment,
         get_html,
         template_name,
@@ -139,7 +175,7 @@ class TestAsyncRenderBlock:
         block,
         params,
     ):
-        """Test that the block_render_async function works."""
+        """Test that the render_block_async function works."""
         rendered = (
             await render_block_async(async_environment, template_name, block, params)
             if params
@@ -147,4 +183,42 @@ class TestAsyncRenderBlock:
         )
 
         html = get_html(html_name)
-        assert html == rendered
+        assert html.strip() == rendered.strip()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "template_name, html_name, blocks, params",
+        [
+            ("simple_page.html.jinja2", "simple_page_content.html", ["content"], None),
+            (
+                "oob_block_and_variables.html.jinja2",
+                "oob_block_and_variables_content.html",
+                ["content"],
+                {"name": NAME},
+            ),
+            (
+                "oob_block_and_variables.html.jinja2",
+                "oob_block_and_variables_content_and_oob.html",
+                ["content", "oob_content"],
+                {"name": NAME, "lucky_number": LUCKY_NUMBER},
+            ),
+        ],
+    )
+    async def test_async_blocks_render(
+        self,
+        async_environment,
+        get_html,
+        template_name,
+        html_name,
+        blocks,
+        params,
+    ):
+        """Test that the render_blocks_async function works."""
+        rendered = (
+            await render_blocks_async(async_environment, template_name, blocks, params)
+            if params
+            else await render_blocks_async(async_environment, template_name, blocks)
+        )
+
+        html = get_html(html_name)
+        assert html.strip() == rendered.strip()
