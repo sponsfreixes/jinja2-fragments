@@ -62,6 +62,13 @@ And this will only render:
 <p>This is the magic number: 42.</p>
 ```
 
+### Rendering multiple blocks
+
+With the variant `render_blocks` (notice the plural) it is also possible to render 
+multiple blocks from the same template and concatenate them all to return them in a 
+single response. This enables easier 
+[out-of-band updates](https://htmx.org/attributes/hx-swap-oob/) when using HTMX.
+
 ## Usage with Flask
 
 If you want to use Jinja2 Fragments with Flask, assuming the same template as the
