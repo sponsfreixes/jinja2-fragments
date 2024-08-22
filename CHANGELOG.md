@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.6.0
+Released 2024-08-21
+* Adds support for rendering multiple blocks ([PR #34](https://github.com/sponsfreixes/jinja2-fragments/pull/34)).
+
 ## Version 1.5.0
 Released 2024-07-06
 * Removes support for Jinja macros. This feature introduced a bug that breaks some complex templates. See discussion on [Issue #21](https://github.com/sponsfreixes/jinja2-fragments/issues/21).
