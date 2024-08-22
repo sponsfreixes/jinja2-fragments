@@ -19,6 +19,15 @@ from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.quart import render_block as quart_render_block
 from jinja2_fragments.sanic import render as sanic_render
 
+# fmt: off
+# Needed for type hints because we are using `from __future__ import annotations`
+# to support Python <3.10. See
+# https://stackoverflow.com/questions/66734640/any-downsides-to-using-from-future-import-annotations-everywhere
+# for shortcomings of using the annotations import,
+from litestar.contrib.htmx.request import HTMXRequest  # noqa isort: skip
+from litestar.response import Template  # noqa isort: skip
+# fmt: on
+
 NAME = "Guido"
 LUCKY_NUMBER = "42"
 
@@ -308,9 +317,9 @@ def sanic_client(sanic_app: sanic.Sanic):
 def litestar_app():
     from pathlib import Path
 
-    from litestar.contrib.htmx.request import HTMXRequest
+    from litestar.contrib.htmx.request import HTMXRequest  # noqa
     from litestar.contrib.jinja import JinjaTemplateEngine
-    from litestar.response import Response, Template
+    from litestar.response import Response, Template  # noqa
     from litestar.template.config import TemplateConfig
 
     from jinja2_fragments.litestar import BlockNotFoundError, HTMXBlockTemplate
