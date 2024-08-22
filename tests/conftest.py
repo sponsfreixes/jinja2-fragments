@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pathlib
 
 import fastapi
@@ -298,7 +300,7 @@ def sanic_app():
 
 
 @pytest.fixture(scope="session")
-def sanic_client(sanic_app: "sanic.Sanic"):
+def sanic_client(sanic_app: sanic.Sanic):
     return sanic_app.test_client
 
 
