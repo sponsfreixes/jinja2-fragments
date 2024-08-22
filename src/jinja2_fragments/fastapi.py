@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 try:
@@ -24,11 +26,11 @@ class Jinja2Blocks(Jinja2Templates):
     def TemplateResponse(
         self,
         name: str,
-        context: typing.Dict[str, typing.Any],
+        context: dict[str, typing.Any],
         status_code: int = 200,
-        headers: typing.Optional[typing.Mapping[str, str]] = None,
-        media_type: typing.Optional[str] = None,
-        background: typing.Optional[BackgroundTask] = None,
+        headers: typing.Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        background: BackgroundTask | None = None,
         *,
         block_names: list[str] = [],
     ) -> Response:
@@ -38,24 +40,24 @@ class Jinja2Blocks(Jinja2Templates):
     def TemplateResponse(
         self,
         name: str,
-        context: typing.Dict[str, typing.Any],
+        context: dict[str, typing.Any],
         status_code: int = 200,
-        headers: typing.Optional[typing.Mapping[str, str]] = None,
-        media_type: typing.Optional[str] = None,
-        background: typing.Optional[BackgroundTask] = None,
+        headers: typing.Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        background: BackgroundTask | None = None,
         *,
-        block_name: typing.Optional[str] = None,
+        block_name: str | None = None,
     ) -> Response:
         ...
 
     def TemplateResponse(
         self,
         name: str,
-        context: typing.Dict[str, typing.Any],
+        context: dict[str, typing.Any],
         status_code: int = 200,
-        headers: typing.Optional[typing.Mapping[str, str]] = None,
-        media_type: typing.Optional[str] = None,
-        background: typing.Optional[BackgroundTask] = None,
+        headers: typing.Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        background: BackgroundTask | None = None,
         **kwargs: typing.Any,
     ) -> Response:
         if "request" not in context:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from asyncio import AbstractEventLoop
 
@@ -5,9 +7,7 @@ from jinja2 import Environment
 
 
 class BlockNotFoundError(Exception):
-    def __init__(
-        self, block_name: str, template_name: str, message: typing.Optional[str] = None
-    ):
+    def __init__(self, block_name: str, template_name: str, message: str | None = None):
         self.block_name = block_name
         self.template_name = template_name
         super().__init__(
