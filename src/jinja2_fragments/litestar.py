@@ -9,10 +9,10 @@ try:
     from litestar.background_tasks import BackgroundTask, BackgroundTasks
     from litestar.connection import Request
     from litestar.contrib.htmx.response import HTMXTemplate
-    from litestar.contrib.htmx.types import EventAfterType, PushUrlType, ReSwapMethod
     from litestar.datastructures import Cookie
     from litestar.enums import MediaType
     from litestar.exceptions import ImproperlyConfiguredException, LitestarException
+    from litestar.plugins.htmx import EventAfterType, PushUrlType, ReSwapMethod
     from litestar.response.base import ASGIResponse
     from litestar.utils.deprecation import warn_deprecation
 except ModuleNotFoundError as e:
