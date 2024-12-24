@@ -9,12 +9,23 @@ try:
     from litestar.background_tasks import BackgroundTask, BackgroundTasks
     from litestar.connection import Request
     from litestar.contrib.htmx.response import HTMXTemplate
-    from litestar.contrib.htmx.types import EventAfterType, PushUrlType, ReSwapMethod
     from litestar.datastructures import Cookie
     from litestar.enums import MediaType
     from litestar.exceptions import ImproperlyConfiguredException, LitestarException
     from litestar.response.base import ASGIResponse
     from litestar.utils.deprecation import warn_deprecation
+
+    try:
+        # litestar>=2.13.0
+        from litestar.plugins.htmx import EventAfterType, PushUrlType, ReSwapMethod
+    except ImportError:
+        # litestar<2.13.0
+        from litestar.contrib.htmx.types import (
+            EventAfterType,
+            PushUrlType,
+            ReSwapMethod,
+        )
+
 except ModuleNotFoundError as e:
     raise ModuleNotFoundError(
         "Install litestar[jinja] before using jinja_fragments.litestar"
