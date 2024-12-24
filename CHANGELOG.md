@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.7.0
+Released 2024-12-24
+* Adds support for Litestar>=2.13.0 ([PR #37](https://github.com/sponsfreixes/jinja2-fragments/pull/37)).
+* Drops support for Python 3.8.
+
 ## Version 1.6.0
 Released 2024-08-21
 * Adds support for rendering multiple blocks ([PR #34](https://github.com/sponsfreixes/jinja2-fragments/pull/34)).
