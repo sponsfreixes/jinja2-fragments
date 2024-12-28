@@ -8,7 +8,6 @@ try:
     from litestar import Litestar
     from litestar.background_tasks import BackgroundTask, BackgroundTasks
     from litestar.connection import Request
-    from litestar.contrib.htmx.response import HTMXTemplate
     from litestar.datastructures import Cookie
     from litestar.enums import MediaType
     from litestar.exceptions import ImproperlyConfiguredException, LitestarException
@@ -17,9 +16,15 @@ try:
 
     try:
         # litestar>=2.13.0
-        from litestar.plugins.htmx import EventAfterType, PushUrlType, ReSwapMethod
+        from litestar.plugins.htmx import (
+            EventAfterType,
+            HTMXTemplate,
+            PushUrlType,
+            ReSwapMethod,
+        )
     except ImportError:
         # litestar<2.13.0
+        from litestar.contrib.htmx.response import HTMXTemplate
         from litestar.contrib.htmx.types import (
             EventAfterType,
             PushUrlType,
