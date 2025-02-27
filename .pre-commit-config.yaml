@@ -1,15 +1,15 @@
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.19.1
     hooks:
       - id: pyupgrade
         args: [--py3-plus]
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 25.1.0
     hooks:
       - id: black
-        language_version: python3.10
+        language_version: python3.13
 
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1
@@ -17,6 +17,6 @@ repos:
       - id: isort
 
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 7.1.2
     hooks:
       - id: flake8
