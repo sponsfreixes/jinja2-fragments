@@ -116,7 +116,7 @@ class TestRenderBlock:
         )
 
         html = get_html(html_name)
-        assert html.strip() == rendered.strip()
+        assert html == rendered
 
     @pytest.mark.parametrize(
         "template_name, html_name, block, params",
@@ -138,9 +138,11 @@ class TestRenderBlock:
         invalid block name.
         """
         with pytest.raises(BlockNotFoundError) as exc:
-            render_block(
-                environment, template_name, block, params
-            ) if params else render_block(environment, template_name, block)
+            (
+                render_block(environment, template_name, block, params)
+                if params
+                else render_block(environment, template_name, block)
+            )
 
         assert exc.value.block_name == block
         assert exc.value.template_name == template_name
@@ -183,7 +185,7 @@ class TestAsyncRenderBlock:
         )
 
         html = get_html(html_name)
-        assert html.strip() == rendered.strip()
+        assert html == rendered
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -221,4 +223,4 @@ class TestAsyncRenderBlock:
         )
 
         html = get_html(html_name)
-        assert html.strip() == rendered.strip()
+        assert html == rendered

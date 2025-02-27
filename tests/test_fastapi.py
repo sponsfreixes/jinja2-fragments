@@ -1,5 +1,3 @@
-import re
-
 import pytest
 
 from jinja2_fragments import BlockNotFoundError
@@ -27,9 +25,8 @@ class TestFastAPIRenderBlock:
         get_html,
     ):
         response = fastapi_client.get("/simple_page_content")
-        response_text = response.text.replace('"', "").strip("\n")
-        html = get_html("simple_page_content.html").strip("\n")
-        assert html == response_text
+        html = get_html("simple_page_content.html")
+        assert html == response.text
 
     def test_nested_content(
         self,
@@ -37,10 +34,8 @@ class TestFastAPIRenderBlock:
         get_html,
     ):
         response = fastapi_client.get("/nested_content")
-        response_text = re.sub(r"[\s\"]*", "", response.text).replace("\\n", "")
         html = get_html("nested_blocks_and_variables_content.html")
-        html = re.sub(r"[\s\"]*", "", html)
-        assert html == response_text
+        assert html == response.text
 
     def test_nested_inner(
         self,
@@ -48,10 +43,8 @@ class TestFastAPIRenderBlock:
         get_html,
     ):
         response = fastapi_client.get("/nested_inner")
-        response_text = re.sub(r"[\s\"]*", "", response.text).replace("\\n", "")
         html = get_html("nested_blocks_and_variables_inner.html")
-        html = re.sub(r"[\s\"]*", "", html)
-        assert html == response_text
+        assert html == response.text
 
     def test_out_of_band_update(
         self,
@@ -59,10 +52,8 @@ class TestFastAPIRenderBlock:
         get_html,
     ):
         response = fastapi_client.get("/out_of_band_block")
-        response_text = re.sub(r"[\s\"]*", "", response.text).replace("\\n", "")
         html = get_html("oob_block_and_variables_content_and_oob.html")
-        html = re.sub(r"[\s\"]*", "", html)
-        assert html == response_text
+        assert html == response.text
 
     def test_nested_inner_html_response_class(
         self,
@@ -71,10 +62,8 @@ class TestFastAPIRenderBlock:
     ):
         """using `response_class=HTMLResponse` should still work"""
         response = fastapi_client.get("/nested_inner_html_response_class")
-        response_text = re.sub(r"[\s\"]*", "", response.text).replace("\\n", "")
         html = get_html("nested_blocks_and_variables_inner.html")
-        html = re.sub(r"[\s\"]*", "", html)
-        assert html == response_text
+        assert html == response.text
 
     def test_exception(self, fastapi_client):
         with pytest.raises(BlockNotFoundError) as exc:
