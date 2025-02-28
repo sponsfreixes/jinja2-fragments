@@ -46,13 +46,13 @@ class TestFastAPIRenderBlock:
         html = get_html("nested_blocks_and_variables_inner.html")
         assert html == response.text
 
-    def test_out_of_band_update(
+    def test_multiple_blocks(
         self,
         fastapi_client,
         get_html,
     ):
-        response = fastapi_client.get("/out_of_band_block")
-        html = get_html("oob_block_and_variables_content_and_oob.html")
+        response = fastapi_client.get("/multiple_blocks")
+        html = get_html("multiple_blocks_all_blocks.html")
         assert html == response.text
 
     def test_nested_inner_html_response_class(

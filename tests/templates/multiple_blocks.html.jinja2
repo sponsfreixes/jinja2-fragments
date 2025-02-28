@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>This is the title</title>
+</head>
+<body>
+    <h1>This is a header</h1>
+    {% block content %}
+    <p>This is the content. Hello {{ name }}!</p>
+    {% endblock %}
+    <p>A paragraph.</p>
+    {% block additional_content %}
+    <p>Lucky number: {{ lucky_number }}</p>
+    {% endblock %}
+</body>
+</html>

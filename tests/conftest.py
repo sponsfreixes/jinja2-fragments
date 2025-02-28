@@ -234,18 +234,18 @@ def fastapi_app():
             block_name="inner",
         )
 
-    @_app.get("/out_of_band_block")
-    async def out_of_band_block(
+    @_app.get("/multiple_blocks")
+    async def multiple_blocks(
         request: fastapi.requests.Request,
     ):
         """Decorator wraps around route method and includes `block_names`
         parameter, so it will render content within all given blocks.
         """
-        page_to_render = "oob_block_and_variables.html.jinja2"
+        page_to_render = "multiple_blocks.html.jinja2"
         return templates.TemplateResponse(
             page_to_render,
             {"request": request, "name": NAME, "lucky_number": LUCKY_NUMBER},
-            block_names=["content", "oob_content"],
+            block_names=["content", "additional_content"],
         )
 
     @_app.get("/invalid_block")

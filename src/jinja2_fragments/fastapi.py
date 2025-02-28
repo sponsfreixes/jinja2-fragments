@@ -33,8 +33,7 @@ class Jinja2Blocks(Jinja2Templates):
         background: BackgroundTask | None = None,
         *,
         block_names: list[str] = [],
-    ) -> Response:
-        ...
+    ) -> Response: ...
 
     @typing.overload
     def TemplateResponse(
@@ -47,8 +46,7 @@ class Jinja2Blocks(Jinja2Templates):
         background: BackgroundTask | None = None,
         *,
         block_name: str | None = None,
-    ) -> Response:
-        ...
+    ) -> Response: ...
 
     def TemplateResponse(
         self,

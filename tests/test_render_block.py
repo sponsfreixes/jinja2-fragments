@@ -92,15 +92,15 @@ class TestRenderBlock:
         [
             ("simple_page.html.jinja2", "simple_page_content.html", ["content"], None),
             (
-                "oob_block_and_variables.html.jinja2",
-                "oob_block_and_variables_content.html",
+                "multiple_blocks.html.jinja2",
+                "multiple_blocks_single_block.html",
                 ["content"],
                 {"name": NAME},
             ),
             (
-                "oob_block_and_variables.html.jinja2",
-                "oob_block_and_variables_content_and_oob.html",
-                ["content", "oob_content"],
+                "multiple_blocks.html.jinja2",
+                "multiple_blocks_all_blocks.html",
+                ["content", "additional_content"],
                 {"name": NAME, "lucky_number": LUCKY_NUMBER},
             ),
         ],
@@ -193,15 +193,15 @@ class TestAsyncRenderBlock:
         [
             ("simple_page.html.jinja2", "simple_page_content.html", ["content"], None),
             (
-                "oob_block_and_variables.html.jinja2",
-                "oob_block_and_variables_content.html",
+                "multiple_blocks.html.jinja2",
+                "multiple_blocks_single_block.html",
                 ["content"],
                 {"name": NAME},
             ),
             (
-                "oob_block_and_variables.html.jinja2",
-                "oob_block_and_variables_content_and_oob.html",
-                ["content", "oob_content"],
+                "multiple_blocks.html.jinja2",
+                "multiple_blocks_all_blocks.html",
+                ["content", "additional_content"],
                 {"name": NAME, "lucky_number": LUCKY_NUMBER},
             ),
         ],
