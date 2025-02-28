@@ -44,3 +44,15 @@ class TestLitestarRenderBlock:
             == '{"detail":"Validation failed for GET","extra":\
 "Block \'invalid_block\' not found in template \'simple_page.html.jinja2\'"}'
         )
+
+    @pytest.mark.parametrize(
+        "route, html_name",
+        [
+            ("/multiple_blocks", "multiple_blocks_all_blocks.html"),
+        ],
+    )
+    def test_multiple_blocks(self, litestar_client, get_html, route, html_name):
+        response = litestar_client.get(route)
+
+        html = get_html(html_name)
+        assert html == response.text

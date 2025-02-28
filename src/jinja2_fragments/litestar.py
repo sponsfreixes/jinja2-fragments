@@ -36,7 +36,7 @@ except ModuleNotFoundError as e:
         "Install litestar[jinja] before using jinja_fragments.litestar"
     ) from e
 
-from . import render_block
+from . import render_block, render_blocks
 
 
 class BlockNotFoundError(LitestarException):
@@ -61,12 +61,19 @@ class HTMXBlockTemplate(HTMXTemplate):
         params: Optional[Dict[str, Any]] = None,
         after: Optional[EventAfterType] = None,
         block_name: Optional[str] = None,
+        block_names: Optional[list[str]] = None,
         **kwargs: Any,
     ):
         super().__init__(
             push_url, re_swap, re_target, trigger_event, params, after, **kwargs
         )
+        if block_name and block_names:
+            raise ValueError(
+                "Set only the block_name or the block_names input argument, but not "
+                "both."
+            )
         self.block_name = block_name
+        self.block_names = block_names
 
     def to_asgi_response(
         self,
@@ -129,6 +136,17 @@ class HTMXBlockTemplate(HTMXTemplate):
                     ) from exc
                 body = render_block(
                     template_engine.engine, template, self.block_name, context
+                )
+            elif self.block_names:
+                for block_name in self.block_names:
+                    try:
+                        _ = template.blocks[block_name]
+                    except KeyError as exc:
+                        raise BlockNotFoundError(
+                            block_name, self.template_name
+                        ) from exc
+                body = render_blocks(
+                    template_engine.engine, template, self.block_names, context
                 )
             else:
                 body = template.render(**context).encode(self.encoding)

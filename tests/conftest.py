@@ -431,6 +431,14 @@ def litestar_app():
             block_name="invalid_block",
         )
 
+    @litestar.get(path="/multiple_blocks", sync_to_thread=False)
+    def multiple_blocks(request: HTMXRequest) -> Template:
+        return HTMXBlockTemplate(
+            template_name="multiple_blocks.html.jinja2",
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+            block_names=["content", "additional_content"],
+        )
+
     app = litestar.Litestar(
         route_handlers=[
             get_form,
@@ -438,6 +446,7 @@ def litestar_app():
             nested_content,
             nested_inner,
             invalid_block,
+            multiple_blocks,
         ],
         debug=True,
         request_class=HTMXRequest,
