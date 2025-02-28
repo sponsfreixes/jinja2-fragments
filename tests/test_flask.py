@@ -3,8 +3,10 @@ import pytest
 from jinja2_fragments import BlockNotFoundError
 from jinja2_fragments.flask import (
     before_render_template_block,
+    before_render_template_blocks,
     render_block,
     template_block_rendered,
+    template_blocks_rendered,
 )
 
 
@@ -84,4 +86,53 @@ class TestFlaskRenderBlock:
         assert sender == flask_app
         assert template_name == "simple_page.html.jinja2"
         assert block_name == "content"
+        assert context["testing"] == "yes please"
+
+
+class TestFlaskRenderBlocks:
+    def test_multiple_blocks(self, flask_client, get_html):
+        response = flask_client.get("/multiple_blocks")
+
+        html = get_html("multiple_blocks_all_blocks.html")
+        assert html == response.text
+
+    @pytest.mark.parametrize(
+        "signal",
+        [
+            before_render_template_blocks,
+            template_blocks_rendered,
+        ],
+    )
+    def test_signals(app, flask_app, flask_client, signal):
+        recorded = []
+
+        def record(sender, template_name, block_names, context):
+            context["testing"] = "yes please"
+            recorded.append((sender, template_name, block_names, context))
+
+        def call():
+            flask_client.get("/multiple_blocks")
+
+        # Test for absence of typo in signal name
+        assert signal is globals().get(signal.name.replace("-", "_"))
+
+        # No signal should be recorded
+        call()
+        assert len(recorded) == 0
+
+        # Connect, record one signal
+        signal.connect(record, flask_app)
+        call()
+        assert len(recorded) == 1
+
+        # Disconnect, stop recording signals
+        signal.disconnect(record, flask_app)
+        call()
+        assert len(recorded) == 1
+
+        # Verify values sent in the signal
+        sender, template_name, block_names, context = recorded[0]
+        assert sender == flask_app
+        assert template_name == "multiple_blocks.html.jinja2"
+        assert block_names == ["content", "additional_content"]
         assert context["testing"] == "yes please"
