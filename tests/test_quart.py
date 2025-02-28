@@ -56,3 +56,12 @@ class TestQuartRenderBlock:
 
         assert exc.value.block_name == "invalid_block"
         assert exc.value.template_name == "simple_page.html.jinja2"
+
+
+class TestQuartRenderBlocks:
+    async def test_multiple_blocks(self, quart_client, get_html):
+        response = await quart_client.get("/multiple_blocks")
+        response_text = await response.get_data(True)
+
+        html = get_html("multiple_blocks_all_blocks.html")
+        assert html == response_text

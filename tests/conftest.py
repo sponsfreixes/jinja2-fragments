@@ -18,6 +18,7 @@ from jinja2_fragments.fastapi import Jinja2Blocks
 from jinja2_fragments.flask import render_block as flask_render_block
 from jinja2_fragments.flask import render_blocks as flask_render_blocks
 from jinja2_fragments.quart import render_block as quart_render_block
+from jinja2_fragments.quart import render_blocks as quart_render_blocks
 from jinja2_fragments.sanic import render as sanic_render
 
 # fmt: off
@@ -154,6 +155,15 @@ def quart_app():
         return await quart_render_block(
             "nested_blocks_and_variables.html.jinja2",
             "inner",
+            lucky_number=LUCKY_NUMBER,
+        )
+
+    @app.get("/multiple_blocks")
+    def multiple_blocks():
+        return quart_render_blocks(
+            "multiple_blocks.html.jinja2",
+            ["content", "additional_content"],
+            name=NAME,
             lucky_number=LUCKY_NUMBER,
         )
 

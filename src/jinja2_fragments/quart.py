@@ -19,13 +19,19 @@ except ImportError:
     CUSTOM_SIGNAL = True
 
 
-from . import render_block_async
+from . import render_block_async, render_blocks_async
 
 jinja2_fragments_signals = Namespace()
+
 before_render_template_block = jinja2_fragments_signals.signal(
     "before-render-template-block"
 )
 template_block_rendered = jinja2_fragments_signals.signal("template-block-rendered")
+
+before_render_template_blocks = jinja2_fragments_signals.signal(
+    "before-render-template-blocks"
+)
+template_blocks_rendered = jinja2_fragments_signals.signal("template-blocks-rendered")
 
 
 async def render_block(
@@ -65,6 +71,48 @@ async def render_block(
             _sync_wrapper=app.ensure_async,
             template_name=template_name,
             block_name=block_name,
+            context=context,
+        )
+    return rendered
+
+
+async def render_blocks(
+    template_name: str, block_names: list[str], **context: typing.Any
+) -> str:
+    """Renders many template blocks from the template folder with the given context.
+
+    :param template_name: the name of the template where to find the block to be
+        rendered
+    :param block_names: the names of the blocks to be rendered
+    :param context: the variables that should be available in the context of the blocks
+    """
+    app = current_app  # type: ignore[attr-defined]
+    await app.update_template_context(context)
+    if CUSTOM_SIGNAL:
+        await before_render_template_blocks.send(
+            app, template_name=template_name, block_names=block_names, context=context
+        )
+    else:
+        await before_render_template_blocks.send_async(
+            app,
+            _sync_wrapper=app.ensure_async,
+            template_name=template_name,
+            block_names=block_names,
+            context=context,
+        )
+    rendered = await render_blocks_async(
+        app.jinja_env, template_name, block_names, **context
+    )
+    if CUSTOM_SIGNAL:
+        await template_blocks_rendered.send(
+            app, template_name=template_name, block_names=block_names, context=context
+        )
+    else:
+        await template_blocks_rendered.send_async(
+            app,
+            _sync_wrapper=app.ensure_async,
+            template_name=template_name,
+            block_names=block_names,
             context=context,
         )
     return rendered
