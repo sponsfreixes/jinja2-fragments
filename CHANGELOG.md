@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.8.0
+Released 2025-02-27
+* Adds support for rendering multiple blocks on Flask, Quart, Sanic and Litestar (solves [Issue #40](https://github.com/sponsfreixes/jinja2-fragments/issues/40)).
+* Fixes deprecated Litestar import ([PR #38](https://github.com/sponsfreixes/jinja2-fragments/pull/38)).
+
 ## Version 1.7.0
 Released 2024-12-24
 * Adds support for Litestar>=2.13.0 ([PR #37](https://github.com/sponsfreixes/jinja2-fragments/pull/37)).
