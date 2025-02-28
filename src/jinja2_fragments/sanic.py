@@ -11,7 +11,7 @@ except ModuleNotFoundError as e:
         "Install sanic, sanic_ext before using jinja2_fragments.sanic"
     ) from e
 
-from . import render_block, render_block_async
+from . import render_block, render_block_async, render_blocks, render_blocks_async
 
 
 async def render(
@@ -23,9 +23,10 @@ async def render(
     environment: Optional[Environment] = None,
     context: Optional[Dict[str, Any]] = None,
     *,
-    block: Optional[str] = None
+    block: Optional[str] = None,
+    blocks: Optional[list[str]] = None
 ) -> sanic_render.TemplateResponse:
-    if not block:
+    if not block and not blocks:
         return await sanic_render.render(
             template_name=template_name,
             status=status,
@@ -35,6 +36,11 @@ async def render(
             environment=environment,
             context=context,
         )
+    if block and blocks:
+        raise ValueError(
+            "Set only the block or the blocks input argument, but not both."
+        )
+
     if app is None:
         try:
             app = Sanic.get_app()
@@ -58,19 +64,35 @@ async def render(
 
     if template_name:
         if app.config.TEMPLATING_ENABLE_ASYNC:
-            content = await render_block_async(
-                environment=environment,
-                template_name=template_name,
-                block_name=block,
-                **kwargs
-            )
+            if block:
+                content = await render_block_async(
+                    environment=environment,
+                    template_name=template_name,
+                    block_name=block,
+                    **kwargs
+                )
+            else:
+                content = await render_blocks_async(
+                    environment=environment,
+                    template_name=template_name,
+                    block_names=blocks,
+                    **kwargs
+                )
         else:
-            content = render_block(
-                environment=environment,
-                template_name=template_name,
-                block_name=block,
-                **kwargs
-            )
+            if block:
+                content = render_block(
+                    environment=environment,
+                    template_name=template_name,
+                    block_name=block,
+                    **kwargs
+                )
+            else:
+                content = render_blocks(
+                    environment=environment,
+                    template_name=template_name,
+                    block_names=blocks,
+                    **kwargs
+                )
 
         return sanic_render.TemplateResponse(  # type: ignore
             content, status=status, headers=headers, content_type=content_type

@@ -325,6 +325,14 @@ def sanic_app():
             context={"lucky_number": LUCKY_NUMBER},
         )
 
+    @app.get("/multiple_blocks")
+    async def multiple_blocks(request: sanic.Request):
+        return await sanic_render(
+            "multiple_blocks.html.jinja2",
+            blocks=["content", "additional_content"],
+            context={"name": NAME, "lucky_number": LUCKY_NUMBER},
+        )
+
     yield app
 
 
