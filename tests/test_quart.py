@@ -59,6 +59,10 @@ class TestQuartRenderBlock:
 
 
 class TestQuartRenderBlocks:
+    @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        sys.version_info < (3, 8), reason="Quart requires Python 3.8.0 or higher"
+    )
     async def test_multiple_blocks(self, quart_client, get_html):
         response = await quart_client.get("/multiple_blocks")
         response_text = await response.get_data(True)

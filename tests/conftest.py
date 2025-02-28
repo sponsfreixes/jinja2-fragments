@@ -159,8 +159,8 @@ def quart_app():
         )
 
     @app.get("/multiple_blocks")
-    def multiple_blocks():
-        return quart_render_blocks(
+    async def multiple_blocks():
+        return await quart_render_blocks(
             "multiple_blocks.html.jinja2",
             ["content", "additional_content"],
             name=NAME,
