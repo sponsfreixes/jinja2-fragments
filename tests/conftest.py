@@ -176,17 +176,10 @@ def quart_client(quart_app):
 
 
 @pytest.fixture(scope="session")
-def fastapi_app():
-    from fastapi.templating import Jinja2Templates
-
+def fastapi_app(environment):
     _app = fastapi.FastAPI()
 
-    templates: Jinja2Templates = Jinja2Blocks(
-        "tests/templates",
-        autoescape=select_autoescape(("html", "jinja2")),
-        trim_blocks=True,
-        lstrip_blocks=True,
-    )
+    templates = Jinja2Blocks(env=environment)
 
     @_app.get("/")
     async def home():
@@ -200,7 +193,7 @@ def fastapi_app():
         `block_name` paramater, so the template renders normally.
         """
         page_to_render = "simple_page.html.jinja2"
-        return templates.TemplateResponse(page_to_render, {"request": request})
+        return templates.TemplateResponse(request, page_to_render)
 
     @_app.get("/simple_page_content")
     async def simple_page_content(
@@ -210,9 +203,7 @@ def fastapi_app():
         parameter, so will only render content within that block.
         """
         page_to_render = "simple_page.html.jinja2"
-        return templates.TemplateResponse(
-            page_to_render, {"request": request}, block_name="content"
-        )
+        return templates.TemplateResponse(request, page_to_render, block_name="content")
 
     @_app.get("/nested_content")
     async def nested_content(request: fastapi.requests.Request):
@@ -222,8 +213,9 @@ def fastapi_app():
         """
         page_to_render = "nested_blocks_and_variables.html.jinja2"
         return templates.TemplateResponse(
+            request,
             page_to_render,
-            {"request": request, "name": NAME, "lucky_number": LUCKY_NUMBER},
+            {"name": NAME, "lucky_number": LUCKY_NUMBER},
             block_name="content",
         )
 
@@ -235,8 +227,9 @@ def fastapi_app():
         """
         page_to_render = "nested_blocks_and_variables.html.jinja2"
         return templates.TemplateResponse(
+            request,
             page_to_render,
-            {"request": request, "lucky_number": LUCKY_NUMBER},
+            {"lucky_number": LUCKY_NUMBER},
             block_name="inner",
         )
 
@@ -249,8 +242,9 @@ def fastapi_app():
         """
         page_to_render = "nested_blocks_and_variables.html.jinja2"
         return templates.TemplateResponse(
+            request,
             page_to_render,
-            {"request": request, "lucky_number": LUCKY_NUMBER},
+            {"lucky_number": LUCKY_NUMBER},
             block_name="inner",
         )
 
@@ -263,8 +257,9 @@ def fastapi_app():
         """
         page_to_render = "multiple_blocks.html.jinja2"
         return templates.TemplateResponse(
+            request,
             page_to_render,
-            {"request": request, "name": NAME, "lucky_number": LUCKY_NUMBER},
+            {"name": NAME, "lucky_number": LUCKY_NUMBER},
             block_names=["content", "additional_content"],
         )
 
@@ -272,7 +267,9 @@ def fastapi_app():
     async def invalid_block(request: fastapi.requests.Request):
         """Decorator wraps around route method and includes an unexisting block name."""
         return templates.TemplateResponse(
-            "simple_page.html.jinja2", {"request": request}, block_name="invalid_block"
+            request,
+            "simple_page.html.jinja2",
+            block_name="invalid_block",
         )
 
     @_app.get("/invalid_block_list")
@@ -280,8 +277,8 @@ def fastapi_app():
         """Decorator wraps around route method and includes an unexisting block name
         passed as a list argument."""
         return templates.TemplateResponse(
+            request,
             "simple_page.html.jinja2",
-            {"request": request},
             block_names=["invalid_block"],
         )
 

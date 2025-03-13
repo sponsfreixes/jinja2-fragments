@@ -9,11 +9,11 @@ requires = [
 tests_requires = [
     "quart >= 0.18.0",
     "flask >= 2.1.0",
-    "fastapi",
+    "fastapi >= 0.108.0",
     "sanic",
     "sanic_ext",
     "sanic_testing",
-    "starlette[full]",
+    "starlette[full] >= 0.29.0",
     "pytest",
     "pytest_asyncio",
     "litestar[standard]",
