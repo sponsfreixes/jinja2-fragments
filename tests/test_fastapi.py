@@ -78,3 +78,27 @@ class TestFastAPIRenderBlock:
 
         assert exc.value.block_name == "invalid_block"
         assert exc.value.template_name == "simple_page.html.jinja2"
+
+    def test_deprecation_warning_simple_page(self, fastapi_client, get_html):
+        with pytest.warns(DeprecationWarning) as record:
+            response = fastapi_client.get(
+                "/simple_page", params={"pass_request_via_context": True}
+            )
+
+        assert len(record) == 1
+        assert "conftest.py" in record[0].filename
+
+        html = get_html("simple_page.html")
+        assert html == response.text
+
+    def test_deprecation_warning_simple_page_content(self, fastapi_client, get_html):
+        with pytest.warns(DeprecationWarning) as record:
+            response = fastapi_client.get(
+                "/simple_page_content", params={"pass_request_via_context": True}
+            )
+
+        assert len(record) == 1
+        assert "conftest.py" in record[0].filename
+
+        html = get_html("simple_page_content.html")
+        assert html == response.text
