@@ -90,6 +90,8 @@ class Jinja2Blocks(Jinja2Templates):
             background,
         ) = self._parse_template_response_args(*args, **kwargs)
 
+        if not isinstance(context, dict):
+            raise TypeError("context must be a dict")
         context.setdefault("request", request)
         for context_processor in self.context_processors:
             context.update(context_processor(request))
@@ -145,74 +147,71 @@ class Jinja2Blocks(Jinja2Templates):
         str,
         dict[str, typing.Any],
         int,
-        typing.Mapping[str, str],
-        str,
-        BackgroundTask,
+        typing.Mapping[str, str] | None,
+        str | None,
+        BackgroundTask | None,
     ]:
         """Parse arguments for the `TemplateResponse` method.
 
         Since the order of positional arguments has changed in starlette 0.29.0,
         parsing the argument list has become more complex. To remain backwards
         compatible, the scheme (< 0.29 or >= 0.29) must be detected.
-
-        This implementation has been extracted from starlette's codebase
-        and is used under the terms of the BSD 3-Clause License.
-
-        https://github.com/encode/starlette/blob/0.46.1/starlette/templating.py#L158
         """
-        if args:
-            if isinstance(
-                args[0], str
-            ):  # the first argument is template name (old style)
-                warnings.warn(
-                    "The `name` is not the first parameter anymore. "
-                    "The first parameter should be the `Request` instance.\n"
-                    'Replace `TemplateResponse(name, {"request": request})` by '
-                    "`TemplateResponse(request, name)`.",
-                    DeprecationWarning,
-                    stacklevel=3,
-                )
 
-                name = args[0]
-                context = args[1] if len(args) > 1 else kwargs.get("context", {})
-                status_code = (
-                    args[2] if len(args) > 2 else kwargs.get("status_code", 200)
-                )
-                headers = args[2] if len(args) > 2 else kwargs.get("headers")
-                media_type = args[3] if len(args) > 3 else kwargs.get("media_type")
-                background = args[4] if len(args) > 4 else kwargs.get("background")
+        if args and isinstance(args[0], Request) or "request" in kwargs:
+            return self._parse_new_style_response_args(*args, **kwargs)
 
-                if "request" not in context:
-                    raise ValueError('context must include a "request" key')
-                request = context["request"]
-            else:  # the first argument is a request instance (new style)
-                request = args[0]
-                name = args[1] if len(args) > 1 else kwargs["name"]
-                context = args[2] if len(args) > 2 else kwargs.get("context", {})
-                status_code = (
-                    args[3] if len(args) > 3 else kwargs.get("status_code", 200)
-                )
-                headers = args[4] if len(args) > 4 else kwargs.get("headers")
-                media_type = args[5] if len(args) > 5 else kwargs.get("media_type")
-                background = args[6] if len(args) > 6 else kwargs.get("background")
-        else:  # all arguments are kwargs
-            if "request" not in kwargs:
-                warnings.warn(
-                    "The `TemplateResponse` now requires the `request` argument.\n"
-                    'Replace `TemplateResponse(name, {"request": request})` by '
-                    "`TemplateResponse(request, name)`.",
-                    DeprecationWarning,
-                    stacklevel=3,
-                )
-                if "request" not in kwargs.get("context", {}):
-                    raise ValueError('context must include a "request" key')
+        warnings.warn(
+            "The `name` is not the first parameter anymore. "
+            "The first parameter should be the `Request` instance.\n"
+            'Replace `TemplateResponse(name, {"request": request})` by '
+            "`TemplateResponse(request, name)`.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        return self._parse_old_style_response_args(*args, **kwargs)
 
-            context = kwargs.get("context", {})
-            request = kwargs.get("request", context.get("request"))
-            name = typing.cast(str, kwargs["name"])
-            status_code = kwargs.get("status_code", 200)
-            headers = kwargs.get("headers")
-            media_type = kwargs.get("media_type")
-            background = kwargs.get("background")
+    @staticmethod
+    def _parse_old_style_response_args(
+        name: str,
+        context: dict[str, typing.Any],
+        status_code: int = 200,
+        headers: typing.Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        background: BackgroundTask | None = None,
+        **extra_kwargs: typing.Any,
+    ) -> tuple[
+        Request,
+        str,
+        dict[str, typing.Any],
+        int,
+        typing.Mapping[str, str] | None,
+        str | None,
+        BackgroundTask | None,
+    ]:
+        if "request" not in context:
+            raise ValueError('context must include a "request" key')
+        request = context["request"]
 
+        return request, name, context, status_code, headers, media_type, background
+
+    @staticmethod
+    def _parse_new_style_response_args(
+        request: Request,
+        name: str,
+        context: dict[str, typing.Any] = {},
+        status_code: int = 200,
+        headers: typing.Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        background: BackgroundTask | None = None,
+        **extra_kwargs: typing.Any,
+    ) -> tuple[
+        Request,
+        str,
+        dict[str, typing.Any],
+        int,
+        typing.Mapping[str, str] | None,
+        str | None,
+        BackgroundTask | None,
+    ]:
         return request, name, context, status_code, headers, media_type, background
