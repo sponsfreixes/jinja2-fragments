@@ -188,22 +188,36 @@ def fastapi_app(environment):
     @_app.get("/simple_page")
     async def simple_page(
         request: fastapi.requests.Request,
+        pass_request_via_context: bool = False,
     ):
         """Decorator wraps around route method, but does not define a
         `block_name` paramater, so the template renders normally.
         """
         page_to_render = "simple_page.html.jinja2"
-        return templates.TemplateResponse(request, page_to_render)
+        if pass_request_via_context:
+            return templates.TemplateResponse(
+                page_to_render, context={"request": request}
+            )
+        else:
+            return templates.TemplateResponse(request, page_to_render)
 
     @_app.get("/simple_page_content")
     async def simple_page_content(
         request: fastapi.requests.Request,
+        pass_request_via_context: bool = False,
     ):
         """Decorator wraps around route method and includes `block_name`
         parameter, so will only render content within that block.
         """
         page_to_render = "simple_page.html.jinja2"
-        return templates.TemplateResponse(request, page_to_render, block_name="content")
+        if pass_request_via_context:
+            return templates.TemplateResponse(
+                name=page_to_render, context={"request": request}, block_name="content"
+            )
+        else:
+            return templates.TemplateResponse(
+                request=request, name=page_to_render, block_name="content"
+            )
 
     @_app.get("/nested_content")
     async def nested_content(request: fastapi.requests.Request):

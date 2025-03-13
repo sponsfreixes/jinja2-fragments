@@ -149,6 +149,17 @@ class Jinja2Blocks(Jinja2Templates):
         str,
         BackgroundTask,
     ]:
+        """Parse arguments for the `TemplateResponse` method.
+
+        Since the order of positional arguments has changed in starlette 0.29.0,
+        parsing the argument list has become more complex. To remain backwards
+        compatible, the scheme (< 0.29 or >= 0.29) must be detected.
+
+        This implementation has been extracted from starlette's codebase
+        and is used under the terms of the BSD 3-Clause License.
+
+        https://github.com/encode/starlette/blob/0.46.1/starlette/templating.py#L158
+        """
         if args:
             if isinstance(
                 args[0], str
@@ -159,7 +170,7 @@ class Jinja2Blocks(Jinja2Templates):
                     'Replace `TemplateResponse(name, {"request": request})` by '
                     "`TemplateResponse(request, name)`.",
                     DeprecationWarning,
-                    stacklevel=2,
+                    stacklevel=3,
                 )
 
                 name = args[0]
@@ -191,7 +202,7 @@ class Jinja2Blocks(Jinja2Templates):
                     'Replace `TemplateResponse(name, {"request": request})` by '
                     "`TemplateResponse(request, name)`.",
                     DeprecationWarning,
-                    stacklevel=2,
+                    stacklevel=3,
                 )
                 if "request" not in kwargs.get("context", {}):
                     raise ValueError('context must include a "request" key')
