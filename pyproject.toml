@@ -23,6 +23,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: HTML",
 ]
 license = "MIT"
+requires-python = ">=3.9"
 dependencies = [
     "jinja2 >=3.1.0"
 ]
