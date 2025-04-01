@@ -37,6 +37,7 @@ Homepage = "https://github.com/sponsfreixes/jinja2-fragments"
 [project.optional-dependencies]
 dev = [
     "pre-commit",
+    "flake8-pyproject",
 ]
 tests = [
     "quart >=0.18.0",
@@ -59,3 +60,10 @@ zip-safe = false
 
 [tool.setuptools.package-data]
 jinja2_fragments = ["py.typed"]
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
