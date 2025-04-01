@@ -24,7 +24,7 @@ async def render(
     context: Optional[Dict[str, Any]] = None,
     *,
     block: Optional[str] = None,
-    blocks: Optional[list[str]] = None
+    blocks: Optional[list[str]] = None,
 ) -> sanic_render.TemplateResponse:
     if not block and not blocks:
         return await sanic_render.render(
@@ -69,14 +69,14 @@ async def render(
                     environment=environment,
                     template_name=template_name,
                     block_name=block,
-                    **kwargs
+                    **kwargs,
                 )
             else:
                 content = await render_blocks_async(
                     environment=environment,
                     template_name=template_name,
                     block_names=blocks,
-                    **kwargs
+                    **kwargs,
                 )
         else:
             if block:
@@ -84,14 +84,14 @@ async def render(
                     environment=environment,
                     template_name=template_name,
                     block_name=block,
-                    **kwargs
+                    **kwargs,
                 )
             else:
                 content = render_blocks(
                     environment=environment,
                     template_name=template_name,
                     block_names=blocks,
-                    **kwargs
+                    **kwargs,
                 )
 
         return sanic_render.TemplateResponse(  # type: ignore
