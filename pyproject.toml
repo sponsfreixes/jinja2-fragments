@@ -37,7 +37,6 @@ Homepage = "https://github.com/sponsfreixes/jinja2-fragments"
 [project.optional-dependencies]
 dev = [
     "pre-commit",
-    "flake8-pyproject",
 ]
 tests = [
     "quart >=0.18.0",

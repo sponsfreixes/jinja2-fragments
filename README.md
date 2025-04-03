@@ -215,8 +215,8 @@ app = Litestar(
 
 ## How to collaborate
 
-This project uses pre-commit hooks to run black, isort, pyupgrade and flake8 on each commit. To have that running
-automatically on your environment, install the project with:
+This project uses pre-commit hooks to run Ruff on each commit.
+To have that running automatically on your environment, install the project with:
 
 ```shell
 pip install -e .[dev]
@@ -228,8 +228,7 @@ And then run once:
 pre-commit install
 ```
 
-From now on, every time you commit your files on this project, they will be automatically processed by the tools listed
-above.
+From now on, every time you commit your files on this project, they will be automatically processed by Ruff.
 
 ## How to run tests
 
