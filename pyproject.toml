@@ -61,9 +61,6 @@ zip-safe = false
 [tool.setuptools.package-data]
 jinja2_fragments = ["py.typed"]
 
-[tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
+[tool.ruff]
+select = ["E", "F", "I"]
+ignore = ["E203"]
