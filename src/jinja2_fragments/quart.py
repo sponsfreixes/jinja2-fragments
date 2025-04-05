@@ -37,12 +37,21 @@ template_blocks_rendered = jinja2_fragments_signals.signal("template-blocks-rend
 async def render_block(
     template_name: str, block_name: str, **context: typing.Any
 ) -> str:
-    """Renders a template's block from the template folder with the given context.
+    """
+    Render a single block from a specified template asynchronously.
 
-    :param template_name: the name of the template where to find the block to be
-        rendered
-    :param block_name: the name of the block to be rendered
-    :param context: the variables that should be available in the context of the block
+    This function renders a specific block within a template located in the
+    template folder, using the provided context variables. It leverages Quart's
+    asynchronous functionality.
+
+    Args:
+        template_name: The name of the template containing the block to render.
+        block_name: The name of the block to render.
+        **context: Keyword arguments representing variables to be used as the
+            context for the block.
+
+    Returns:
+        The rendered string of the specified block.
     """
     app = current_app  # type: ignore[attr-defined]
     await app.update_template_context(context)
@@ -79,12 +88,21 @@ async def render_block(
 async def render_blocks(
     template_name: str, block_names: list[str], **context: typing.Any
 ) -> str:
-    """Renders many template blocks from the template folder with the given context.
+    """
+    Render multiple blocks from a specified template asynchronously.
 
-    :param template_name: the name of the template where to find the block to be
-        rendered
-    :param block_names: the names of the blocks to be rendered
-    :param context: the variables that should be available in the context of the blocks
+    This function renders multiple blocks within a template located in the
+    template folder, using the provided context variables. It leverages Quart's
+    asynchronous functionality.
+
+    Args:
+        template_name: The name of the template containing the blocks to render.
+        block_names: A list of block names to render.
+        **context: Keyword arguments representing variables to be used as the
+            context for the blocks.
+
+    Returns:
+        The rendered string of the specified blocks.
     """
     app = current_app  # type: ignore[attr-defined]
     await app.update_template_context(context)

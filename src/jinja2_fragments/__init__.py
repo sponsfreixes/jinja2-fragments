@@ -73,7 +73,38 @@ def render_block(
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
-    """This returns the rendered template block as a string."""
+    """
+    Render a specific block from a Jinja2 template with the given context.
+
+    This function renders a named block from a template located in the
+    application's template folder. The context variables passed are available
+    within the rendered block. Custom signals are triggered before and
+    after rendering to allow integration with additional logic.
+
+    Args:
+        template_name: The name of the Jinja2 template file. This should
+            include only the template file's name, without the path.
+        block_name: The name of the block defined in the template that
+            you want to render.
+        **context: Additional variables to be included in the
+            template's context. These key-value pairs will be accessible
+            inside the block.
+
+    Returns:
+        The rendered HTML output of the block.
+
+    Raises:
+        RuntimeError: If the Flask application or Jinja2 environment is not
+            properly initialized.
+        TemplateNotFound: If the template specified does not exist.
+        KeyError: If the block specified is not defined in the provided template.
+
+    Signals:
+        before_render_template_block: A signal sent before rendering the block.
+            Includes the `template_name`, `block_name`, and `context`.
+        template_block_rendered: A signal sent after rendering the block.
+            Includes the `template_name`, `block_name`, and `context`.
+    """
     if environment.is_async:
         loop, close = _get_loop()
 
@@ -107,7 +138,38 @@ def render_blocks(
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
-    """This returns one or more rendered template blocks as a string."""
+    """
+    Render multiple blocks from a Jinja2 template with the given context.
+
+    This function processes and renders the specified list of blocks from a
+    single Jinja2 template file in the template folder. The given context
+    variables are shared across all the blocks.
+
+    Args:
+        template_name: The name of the Jinja2 template file. This should
+            include only the template file's name, without the path.
+        block_names: A list of block names from the template that you
+            want to render. These blocks are rendered sequentially in the
+            given order.
+        **context: Additional variables passed as context for rendering
+            the blocks. These variables will be available across all the blocks.
+
+    Returns:
+        A combined HTML string containing the rendered content of all blocks.
+
+    Raises:
+        RuntimeError: If the Flask application or Jinja2 environment is not
+            properly initialized.
+        TemplateNotFound: If the template specified does not exist.
+        KeyError: If any of the blocks specified in `block_names` are not
+            defined in the template.
+
+    Signals:
+        before_render_template_blocks: Triggered before rendering the list of blocks.
+            Includes the `template_name`, `block_names`, and `context`.
+        template_blocks_rendered: Triggered after rendering the blocks.
+            Includes the `template_name`, `block_names`, and `context`.
+    """
     if environment.is_async:
         loop, close = _get_loop()
 

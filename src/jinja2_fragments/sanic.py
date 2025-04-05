@@ -26,6 +26,37 @@ async def render(
     block: Optional[str] = None,
     blocks: Optional[list[str]] = None,
 ) -> sanic_render.TemplateResponse:
+    """
+    Render a template or specific blocks within a template using Sanic.
+
+    This function renders a complete template or specific block(s) from a given
+    template. It supports both synchronous and asynchronous rendering based on
+    the application's configuration. If neither `block` nor `blocks` is provided,
+    the entire template is rendered.
+
+    Args:
+        template_name: The name of the template to be rendered.
+        status: The HTTP status code to be returned with the response.
+        headers: A dictionary of HTTP headers to include in the response.
+        content_type: The content type of the HTTP response.
+        app: The Sanic application instance. If omitted, attempts to locate the
+            current app automatically.
+        environment: The Jinja2 environment used for templating.
+        context: A dictionary containing variables to be passed to the template
+            or blocks for rendering.
+        block: The name of the single block to render within the template.
+        blocks: A list of block names to render within the template. Only one of
+            `block` or `blocks` can be set.
+
+    Returns:
+        A Sanic `TemplateResponse` containing the rendered content.
+
+    Raises:
+        ValueError: If both `block` and `blocks` are set.
+        SanicException: If the Sanic application cannot be determined automatically.
+        ExtensionNotFound: If the templating extension is not enabled or Jinja2 is
+            not installed.
+    """
     if not block and not blocks:
         return await sanic_render.render(
             template_name=template_name,

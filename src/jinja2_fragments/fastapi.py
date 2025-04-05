@@ -80,6 +80,27 @@ class Jinja2Blocks(Jinja2Templates):
         ...
 
     def TemplateResponse(self, *args: typing.Any, **kwargs: typing.Any) -> Response:
+        """
+        Generate an HTTP response with a rendered template.
+
+        This method renders a specified template with the given context and produces
+        an HTTP response that includes the rendered content, as well as an appropriate
+        status code.
+
+        Args:
+            template_name: The name of the template file to be rendered.
+            context: A dictionary of variables to be made available in the template.
+            status_code: The HTTP status code for the response. Defaults to 200 (OK).
+
+        Returns:
+            A FastAPI-compatible HTTP `Response` object containing the rendered
+            template.
+
+        Raises:
+            InvalidContextError: If the provided context is invalid or malformed.
+            TemplateNotFound: If the specified template cannot be located.
+        """
+
         (
             request,
             name,

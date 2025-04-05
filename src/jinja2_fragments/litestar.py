@@ -52,6 +52,20 @@ class BlockNotFoundError(LitestarException):
 
 
 class HTMXBlockTemplate(HTMXTemplate):
+    """
+    A class for rendering specific template blocks with support for HTMX.
+
+    This class facilitates the rendering of individual template blocks or a set of
+    blocks, particularly for HTMX responses. It provides methods for block-specific
+    rendering and conversion of the result into an ASGI-compatible response.
+
+    Attributes:
+        block_name: The name of the single block to be rendered. Optional if
+            `block_names` is provided.
+        block_names: A list of block names to be rendered. Optional if `block_name`
+            is provided.
+    """
+
     def __init__(
         self,
         push_url: Optional[PushUrlType] = None,
@@ -64,6 +78,22 @@ class HTMXBlockTemplate(HTMXTemplate):
         block_names: Optional[list[str]] = None,
         **kwargs: Any,
     ):
+        """
+        Initialize the HTMXBlockTemplate instance.
+
+        The constructor sets up the initial configuration for block rendering.
+        You can specify either a single block (`block_name`) or multiple blocks
+        (`block_names`), but not both at the same time.
+
+        Args:
+            block_name: The name of a single template block to render.
+            block_names: A list of template block names to render. Only one of
+                `block_name` and `block_names` can be set.
+
+        Raises:
+            ValueError: If both `block_name` and `block_names` are set.
+        """
+
         super().__init__(
             push_url, re_swap, re_target, trigger_event, params, after, **kwargs
         )
