@@ -65,6 +65,6 @@ zip-safe = false
 [tool.setuptools.package-data]
 jinja2_fragments = ["py.typed"]
 
-[tool.ruff]
+[tool.ruff.lint]
 select = ["E", "F", "I"]
 ignore = ["E203"]
