@@ -111,15 +111,17 @@ To use Jinja2 Fragments with FastAPI, import ``Jinja2Blocks`` from the ``jinja2_
    @app.get("/full_page")
    async def full_page(request: Request):
        return templates.TemplateResponse(
+           request,
            "page.html.jinja2",
-           {"request": request, "magic_number": 42}
+           {"magic_number": 42}
        )
 
    @app.get("/only_content")
    async def only_content(request: Request):
        return templates.TemplateResponse(
+           request,
            "page.html.jinja2",
-           {"request": request, "magic_number": 42},
+           {"magic_number": 42},
            block_name="content"
        )
 
