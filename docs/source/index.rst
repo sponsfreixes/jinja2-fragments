@@ -152,15 +152,17 @@ Each framework has its own integration patterns:
          @app.get('/profile/{username}')
          def profile(request: Request, username: str):
              return templates.TemplateResponse(
+                request,
                 'profile.html.jinja2',
-                {"request": request, "username": username}
+                {"username": username}
                 )
 
          @app.get('/profile/{username}/details')
          def profile_details(request: Request, username: str):
              return templates.TemplateResponse(
+                 request,
                  'profile.html.jinja2',
-                 {"request": request, "username": username},
+                 {"username": username},
                  block_name="details"
              )
 
