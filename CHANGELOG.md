@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.9.0
+Released 2025-04-20
+* Adds support for newer FastAPI `TemplateResponse` pattern ([PR #42](https://github.com/sponsfreixes/jinja2-fragments/pull/42)).
+* Migrates project from `setup.py` to `pyproject.toml`.
+* Replaces existing pre-commit hooks (black, isort, pyupgrade, flake8) with Ruff.
+* Adds Sphinx documentation.
+
 ## Version 1.8.0
 Released 2025-02-27
 * Adds support for rendering multiple blocks on Flask, Quart, Sanic and Litestar (solves [Issue #40](https://github.com/sponsfreixes/jinja2-fragments/issues/40)).

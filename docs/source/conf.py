@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath("../../src"))
 project = "jinja2-fragments"
 copyright = "Sergi Pons Freixes"
 author = "Sergi Pons Freixes"
-release = "1.8.0"
+release = "1.9.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
