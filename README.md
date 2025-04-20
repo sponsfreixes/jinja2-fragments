@@ -17,6 +17,11 @@ With Jinja2 Fragments, following the
 [Locality of Behavior](https://htmx.org/essays/locality-of-behaviour/) design principle,
 you have a single file for both cases. See below for examples.
 
+## Documentation
+
+The detailed documentation is available at [Read the Docs](https://jinja2-fragments.readthedocs.io/). The rest of this
+README is a summarized version of it.
+
 ## Install
 
 It's just `pip install jinja2-fragments` and you're all set. It's a pure Python package
