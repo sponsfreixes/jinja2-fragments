@@ -11,7 +11,7 @@ authors = [
     {name = "Sergi Pons Freixes", email = "sergi@cub3.net"}
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Framework :: Flask",
     "Framework :: FastAPI",
