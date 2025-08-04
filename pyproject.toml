@@ -34,7 +34,7 @@ Homepage = "https://jinja2-fragments.readthedocs.io/"
 "Issue Tracker" = "https://github.com/sponsfreixes/jinja2-fragments/issues"
 "Changes" = "https://github.com/sponsfreixes/jinja2-fragments/blob/main/CHANGELOG.md"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pre-commit",
 ]
