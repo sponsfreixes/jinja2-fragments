@@ -26,7 +26,12 @@ from jinja2_fragments.sanic import render as sanic_render
 # to support Python <3.10. See
 # https://stackoverflow.com/questions/66734640/any-downsides-to-using-from-future-import-annotations-everywhere
 # for shortcomings of using the annotations import,
-from litestar.contrib.htmx.request import HTMXRequest  # noqa isort: skip
+try:
+    # litestar>=2.13.0
+    from litestar.plugins.htmx import HTMXRequest  # noqa isort: skip
+except ImportError:
+    # litestar<2.13.0
+    from litestar.contrib.htmx.request import HTMXRequest  # noqa isort: skip
 from litestar.response import Template  # noqa isort: skip
 # fmt: on
 
@@ -356,7 +361,6 @@ def sanic_client(sanic_app: sanic.Sanic):
 def litestar_app():
     from pathlib import Path
 
-    from litestar.contrib.htmx.request import HTMXRequest  # noqa
     from litestar.contrib.jinja import JinjaTemplateEngine
     from litestar.response import Response, Template  # noqa
     from litestar.template.config import TemplateConfig

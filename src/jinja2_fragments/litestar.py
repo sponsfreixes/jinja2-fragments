@@ -1,3 +1,5 @@
+import textwrap
+import warnings
 from typing import Any, Dict, Iterable, Optional, Tuple, Union, cast
 
 try:
@@ -68,6 +70,7 @@ class HTMXBlockTemplate(HTMXTemplate):
 
     def __init__(
         self,
+        *args,
         push_url: Optional[PushUrlType] = None,
         re_swap: Optional[ReSwapMethod] = None,
         re_target: Optional[str] = None,
@@ -86,6 +89,8 @@ class HTMXBlockTemplate(HTMXTemplate):
         (`block_names`), but not both at the same time.
 
         Args:
+            template_name: The name of the template to render (when used as first
+            positional arg).
             block_name: The name of a single template block to render.
             block_names: A list of template block names to render. Only one of
                 `block_name` and `block_names` can be set.
@@ -93,6 +98,63 @@ class HTMXBlockTemplate(HTMXTemplate):
         Raises:
             ValueError: If both `block_name` and `block_names` are set.
         """
+
+        # Handle positional arguments for backward compatibility and new signature
+        if len(args) > 1:
+            # Multiple positional arguments - old signature, issue deprecation warning
+            arg_names = [
+                "push_url",
+                "re_swap",
+                "re_target",
+                "trigger_event",
+                "params",
+                "after",
+                "block_name",
+                "block_names",
+            ]
+            warning_message = textwrap.dedent(
+                f"""
+Passing multiple positional arguments to HTMXBlockTemplate is deprecated.
+In a future version, only template_name will be accepted as a positional argument,
+with all other parameters as keyword arguments.
+Please use:
+HTMXBlockTemplate(template_name, push_url={args[0] if len(args) > 0 else None}, ...)
+"""
+            ).strip()
+
+            warnings.warn(
+                warning_message,
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+            # Map positional args to their parameter names
+            for i, arg in enumerate(args):
+                if i < len(arg_names):
+                    if arg_names[i] == "push_url" and push_url is None:
+                        push_url = arg
+                    elif arg_names[i] == "re_swap" and re_swap is None:
+                        re_swap = arg
+                    elif arg_names[i] == "re_target" and re_target is None:
+                        re_target = arg
+                    elif arg_names[i] == "trigger_event" and trigger_event is None:
+                        trigger_event = arg
+                    elif arg_names[i] == "params" and params is None:
+                        params = arg
+                    elif arg_names[i] == "after" and after is None:
+                        after = arg
+                    elif arg_names[i] == "block_name" and block_name is None:
+                        block_name = arg
+                    elif arg_names[i] == "block_names" and block_names is None:
+                        block_names = arg
+
+        elif len(args) == 1:
+            # Single positional argument - assume it's template_name (new behavior)
+            template_name_arg = args[0]
+            if "template_name" not in kwargs:
+                kwargs["template_name"] = template_name_arg
+
+        # No positional arguments - all kwargs, nothing to do
 
         super().__init__(
             push_url, re_swap, re_target, trigger_event, params, after, **kwargs

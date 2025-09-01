@@ -173,9 +173,25 @@ Jinja2 Fragments provides integration with Litestar through the ``HTMXBlockTempl
 
 To use Jinja2 Fragments with Litestar, import ``HTMXBlockTemplate`` from the ``jinja2_fragments.litestar`` module:
 
+.. important::
+   ``HTMXBlockTemplate`` can be used as a drop-in replacement for Litestar's ``Template`` class. 
+   However, passing multiple positional arguments to ``HTMXBlockTemplate`` is deprecated and will be 
+   removed in a future version. Use ``template_name`` as the only positional argument and pass all 
+   other parameters as keyword arguments.
+   
+   **Recommended usage**: ``HTMXBlockTemplate("template.html", block_name="content", push_url="/url")``
+   
+   **Deprecated usage**: ``HTMXBlockTemplate("/url", "innerHTML", "#target", template_name="template.html")``
+
 .. code-block:: python
 
-   from litestar.contrib.htmx.request import HTMXRequest
+   try:
+       # litestar>=2.13.0
+       from litestar.plugins.htmx import HTMXRequest
+   except ImportError:
+       # litestar<2.13.0
+       from litestar.contrib.htmx.request import HTMXRequest
+   
    from litestar import get, Litestar
    from litestar.response import Template
 

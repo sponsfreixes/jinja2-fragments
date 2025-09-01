@@ -180,12 +180,20 @@ async def only_content(request: Request):
 ```
 
 ## Usage with Litestar
-You can use Jinja2 Fragments with Litestar by using the `LitestarHTMXTemplate` class. This gives you access to the `block_name` parameter when rendering the template.
+You can use Jinja2 Fragments with Litestar by using the `HTMXBlockTemplate` class. This gives you access to the `block_name` parameter when rendering the template.
 
 By default, the full page is rendered unless you provide a `block_name` keyword argument.
 
+> **Note**: `HTMXBlockTemplate` can be used as a drop-in replacement for Litestar's `Template` class. However, passing multiple positional arguments to `HTMXBlockTemplate` is deprecated and will be removed in a future version. Use `template_name` as the only positional argument and pass all other parameters as keyword arguments.
+
 ```py
-from litestar.contrib.htmx.request import HTMXRequest
+try:
+    # litestar>=2.13.0
+    from litestar.plugins.htmx import HTMXRequest
+except ImportError:
+    # litestar<2.13.0
+    from litestar.contrib.htmx.request import HTMXRequest
+
 from litestar import get, Litestar
 from litestar.response import Template
 

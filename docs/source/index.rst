@@ -192,7 +192,13 @@ Each framework has its own integration patterns:
 
       .. code-block:: python
 
-        from litestar.contrib.htmx.request import HTMXRequest
+        try:
+            # litestar>=2.13.0
+            from litestar.plugins.htmx import HTMXRequest
+        except ImportError:
+            # litestar<2.13.0
+            from litestar.contrib.htmx.request import HTMXRequest
+        
         from litestar import get, Litestar
         from litestar.response import Template
 
@@ -223,6 +229,11 @@ Each framework has its own integration patterns:
                 directory="path/to/templates", engine=JinjaTemplateEngine,
             )
         )
+
+      .. note::
+         ``HTMXBlockTemplate`` can be used as a drop-in replacement for Litestar's ``Template`` class.
+         However, passing multiple positional arguments is deprecated and will be removed in a future version.
+         Use ``template_name`` as the only positional argument.
 
 
 .. toctree::

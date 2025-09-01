@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.10.0
+Released YYYY-MM-DD
+* **[Litestar]** Improves HTMXBlockTemplate compatibility with Template class - HTMXBlockTemplate can now be used as a drop-in replacement for Template with single positional argument for template_name.
+* **[Litestar]** Adds backward compatibility support with deprecation warnings for multiple positional arguments in HTMXBlockTemplate constructor. The old signature will be removed in a future version.
+* **[Litestar]** Fixes deprecated HTMXRequest import to support both litestar>=2.13.0 and litestar<2.13.0.
+* Adds comprehensive test suite for HTMXBlockTemplate compatibility scenarios.
+
 ## Version 1.9.0
 Released 2025-04-20
 * Adds support for newer FastAPI `TemplateResponse` pattern ([PR #42](https://github.com/sponsfreixes/jinja2-fragments/pull/42)).
