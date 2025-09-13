@@ -68,3 +68,8 @@ jinja2_fragments = ["py.typed"]
 [tool.ruff.lint]
 select = ["E", "F", "I"]
 ignore = ["E203"]
+
+
+[tool.pytest.ini_options]
+# Ensure pytest-asyncio uses function-scoped event loops to avoid deprecation warning
+asyncio_default_fixture_loop_scope = "function"
