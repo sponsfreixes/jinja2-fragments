@@ -1,11 +1,12 @@
 # Changelog
 
 ## Version 1.10.0
-Released YYYY-MM-DD
-* **[Litestar]** Improves HTMXBlockTemplate compatibility with Template class - HTMXBlockTemplate can now be used as a drop-in replacement for Template with single positional argument for template_name.
-* **[Litestar]** Adds backward compatibility support with deprecation warnings for multiple positional arguments in HTMXBlockTemplate constructor. The old signature will be removed in a future version.
-* **[Litestar]** Fixes deprecated HTMXRequest import to support both litestar>=2.13.0 and litestar<2.13.0.
-* Adds comprehensive test suite for HTMXBlockTemplate compatibility scenarios.
+Released 2025-09-22
+* Improves Litestar's HTMXBlockTemplate compatibility with Template class. HTMXBlockTemplate can now be used as a drop-in replacement for Template with single positional argument for template_name.
+* Adds backward compatibility support with deprecation warnings for multiple positional arguments in Litestar's HTMXBlockTemplate constructor. The old signature will be removed in a future version.
+* Fixes deprecated HTMXRequest import to support both Litestar>=2.13.0 and Litestar<2.13.0.
+* Adds a comprehensive test suite for Litestar's HTMXBlockTemplate compatibility scenarios.
+* Testing/Tooling: Configure `pytest-asyncio` to use function-scoped event loops via `pyproject.toml` (`asyncio_default_fixture_loop_scope = "function"`) to silence upcoming deprecation warnings.
 
 ## Version 1.9.0
 Released 2025-04-20
