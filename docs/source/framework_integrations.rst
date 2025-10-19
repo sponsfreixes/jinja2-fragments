@@ -91,10 +91,53 @@ The ``render_block`` function has the same signature as Quart's ``render_templat
 
 Multiple blocks can be rendered with the ``render_blocks`` function, similar to the Flask integration.
 
+Starlette Integration
+====================
+
+Jinja2 Fragments provides native support for Starlette through the ``Jinja2Blocks`` class that extends Starlette's ``Jinja2Templates``. Since FastAPI is built on top of Starlette, this integration works with both pure Starlette applications and FastAPI applications.
+
+To use Jinja2 Fragments with Starlette, import ``Jinja2Blocks`` from the ``jinja2_fragments.starlette`` module:
+
+.. code-block:: python
+
+   from starlette.applications import Starlette
+   from starlette.requests import Request
+   from starlette.routing import Route
+   from jinja2_fragments.starlette import Jinja2Blocks
+
+   templates = Jinja2Blocks(directory="path/to/templates")
+
+   async def full_page(request: Request):
+       return templates.TemplateResponse(
+           request,
+           "page.html.jinja2",
+           {"magic_number": 42}
+       )
+
+   async def only_content(request: Request):
+       return templates.TemplateResponse(
+           request,
+           "page.html.jinja2",
+           {"magic_number": 42},
+           block_name="content"
+       )
+
+   routes = [
+       Route("/full_page", full_page),
+       Route("/only_content", only_content),
+   ]
+
+   app = Starlette(routes=routes)
+
+The ``Jinja2Blocks`` class works exactly like Starlette's ``Jinja2Templates``, but allows you to include an optional ``block_name`` parameter to the ``TemplateResponse`` method.
+
+.. note::
+   You can also render multiple blocks at once by using the ``block_names`` parameter with a list of block names.
+
 FastAPI Integration
 ===================
 
-Jinja2 Fragments provides a ``Jinja2Blocks`` class that extends FastAPI's ``Jinja2Templates``.
+Jinja2 Fragments provides seamless FastAPI integration. Since FastAPI uses Starlette under the hood, the FastAPI integration is built on top of the Starlette implementation.
 
 To use Jinja2 Fragments with FastAPI, import ``Jinja2Blocks`` from the ``jinja2_fragments.fastapi`` module:
 

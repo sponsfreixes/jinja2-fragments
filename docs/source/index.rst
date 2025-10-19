@@ -32,7 +32,8 @@ Key Features
 * Integrations with popular Python web frameworks:
   
   * Flask
-  * FastAPI
+  * Starlette
+  * FastAPI (built on Starlette)
   * Quart (async Flask)
   * Sanic
   * Litestar
@@ -138,6 +139,40 @@ Each framework has its own integration patterns:
          @app.route('/profile/<username>/details')
          async def profile_details(username):
              return await render_block('profile.html.jinja2', 'details', username=username)
+
+   .. tab:: Starlette
+
+      .. code-block:: python
+
+         from starlette.applications import Starlette
+         from starlette.requests import Request
+         from starlette.routing import Route
+         from jinja2_fragments.starlette import Jinja2Blocks
+
+         templates = Jinja2Blocks(directory="templates")
+
+         async def profile(request: Request):
+             username = request.path_params["username"]
+             return templates.TemplateResponse(
+                request,
+                'profile.html.jinja2',
+                {"username": username}
+                )
+
+         async def profile_details(request: Request):
+             username = request.path_params["username"]
+             return templates.TemplateResponse(
+                 request,
+                 'profile.html.jinja2',
+                 {"username": username},
+                 block_name="details"
+             )
+
+         routes = [
+             Route('/profile/{username}', profile),
+             Route('/profile/{username}/details', profile_details),
+         ]
+         app = Starlette(routes=routes)
 
    .. tab:: FastAPI
 
@@ -251,6 +286,7 @@ Each framework has its own integration patterns:
    api/core
    api/flask
    api/quart
+   api/starlette
    api/fastapi
    api/sanic
    api/litestar
