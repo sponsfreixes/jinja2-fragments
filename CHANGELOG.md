@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.11.0
+Released 2025-11-20
+* Adds native Starlette support (solves [Issue #45](https://github.com/sponsfreixes/jinja2-fragments/issues/45)).
+
 ## Version 1.10.0
 Released 2025-09-22
 * Improves Litestar's HTMXBlockTemplate compatibility with Template class. HTMXBlockTemplate can now be used as a drop-in replacement for Template with single positional argument for template_name.

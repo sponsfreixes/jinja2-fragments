@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jinja2_fragments"
-version = "1.10.0"
+version = "1.11.0"
 description = "Render Jinja2 template block as HTML page fragments on Python web frameworks."
 readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
