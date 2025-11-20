@@ -115,6 +115,43 @@ async def full_page():
 async def only_content():
     return await render_block("page.html.jinja2", "content", magic_number=42)
 ```
+## Usage with Starlette
+
+You can use Jinja2 Fragments with Starlette through the `Jinja2Blocks` class, which extends Starlette's `Jinja2Templates`.
+
+Assuming the same template as the examples above:
+
+```py
+from starlette.applications import Starlette
+from starlette.requests import Request
+from starlette.routing import Route
+from jinja2_fragments.starlette import Jinja2Blocks
+
+templates = Jinja2Blocks(directory="path/to/templates")
+
+async def full_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "page.html.jinja2",
+        {"magic_number": 42}
+    )
+
+async def only_content(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "page.html.jinja2",
+        {"magic_number": 42},
+        block_name="content"
+    )
+
+routes = [
+    Route("/full_page", full_page),
+    Route("/only_content", only_content),
+]
+
+app = Starlette(routes=routes)
+```
+
 ## Usage with FastAPI
 
 You can also use Jinja2 Fragments with FastAPI. In this case, Jinja2 Fragments has a wrapper around the FastAPI `Jinja2Templates` object called `Jinja2Blocks`.
