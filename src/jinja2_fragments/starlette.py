@@ -220,7 +220,7 @@ class Jinja2Blocks(Jinja2Templates):
     def _parse_new_style_response_args(
         request: Request,
         name: str,
-        context: dict[str, typing.Any] = {},
+        context: dict[str, typing.Any] | None = None,
         status_code: int = 200,
         headers: typing.Mapping[str, str] | None = None,
         media_type: str | None = None,
@@ -235,4 +235,6 @@ class Jinja2Blocks(Jinja2Templates):
         str | None,
         BackgroundTask | None,
     ]:
+        if context is None:
+            context = {}
         return request, name, context, status_code, headers, media_type, background
