@@ -1,3 +1,9 @@
+"""Starlette integration for jinja2-fragments.
+
+This module provides Starlette-compatible template rendering with support for
+rendering individual Jinja2 blocks or multiple blocks from templates.
+"""
+
 from __future__ import annotations
 
 import typing
@@ -14,6 +20,8 @@ except ModuleNotFoundError as e:
     ) from e
 
 from . import render_block, render_blocks
+
+__all__ = ["InvalidContextError", "Jinja2Blocks"]
 
 
 class InvalidContextError(Exception):
