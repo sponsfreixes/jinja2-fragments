@@ -50,7 +50,7 @@ If you want to render only the ``content`` block, you can use ``render_block`` l
 
     environment = Environment(
         loader=FileSystemLoader("my_templates"),
-        autoescape=select_autoescape(("html", "jinja2"))
+        autoescape=select_autoescape(("html", "jinja2")),
     )
     rendered_html = render_block(
         environment, "page.html.jinja2", "content", magic_number=42
@@ -78,7 +78,7 @@ Jinja2 Fragments also allows you to render multiple blocks at once with the ``re
 
     environment = Environment(
         loader=FileSystemLoader("my_templates"),
-        autoescape=select_autoescape(("html", "jinja2"))
+        autoescape=select_autoescape(("html", "jinja2")),
     )
     rendered_html = render_blocks(
         environment, "page.html.jinja2", ["header", "content"], magic_number=42

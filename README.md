@@ -55,7 +55,7 @@ from jinja2_fragments import render_block
 
 environment = Environment(
     loader=FileSystemLoader("my_templates"),
-    autoescape=select_autoescape(("html", "jinja2"))
+    autoescape=select_autoescape(("html", "jinja2")),
 )
 rendered_html = render_block(
     environment, "page.html.jinja2", "content", magic_number=42
@@ -85,6 +85,7 @@ from jinja2_fragments.flask import render_block
 
 app = Flask(__name__)
 
+
 @app.get("/full_page")
 def full_page():
     return render_template("page.html.jinja2", magic_number=42)
@@ -105,6 +106,7 @@ from quart import Quart, render_template
 from jinja2_fragments.quart import render_block
 
 app = Quart(__name__)
+
 
 @app.get("/full_page")
 async def full_page():
@@ -129,20 +131,16 @@ from jinja2_fragments.starlette import Jinja2Blocks
 
 templates = Jinja2Blocks(directory="path/to/templates")
 
+
 async def full_page(request: Request):
-    return templates.TemplateResponse(
-        request,
-        "page.html.jinja2",
-        {"magic_number": 42}
-    )
+    return templates.TemplateResponse(request, "page.html.jinja2", {"magic_number": 42})
+
 
 async def only_content(request: Request):
     return templates.TemplateResponse(
-        request,
-        "page.html.jinja2",
-        {"magic_number": 42},
-        block_name="content"
+        request, "page.html.jinja2", {"magic_number": 42}, block_name="content"
     )
+
 
 routes = [
     Route("/full_page", full_page),
@@ -169,21 +167,16 @@ app = FastAPI()
 
 templates = Jinja2Blocks(directory="path/to/templates")
 
+
 @app.get("/full_page")
 async def full_page(request: Request):
-    return templates.TemplateResponse(
-        request,
-        "page.html.jinja2",
-        {"magic_number": 42}
-    )
+    return templates.TemplateResponse(request, "page.html.jinja2", {"magic_number": 42})
+
 
 @app.get("/only_content")
 async def only_content(request: Request):
     return templates.TemplateResponse(
-        request,
-        "page.html.jinja2",
-        {"magic_number": 42},
-        block_name="content"
+        request, "page.html.jinja2", {"magic_number": 42}, block_name="content"
     )
 ```
 
@@ -198,21 +191,18 @@ import sanic_ext
 from jinja2_fragments.sanic import render
 
 app = Sanic(__name__)
-app.extend(config=sanic_ext.Config(templating_path_to_templates='path/to/templates'))
+app.extend(config=sanic_ext.Config(templating_path_to_templates="path/to/templates"))
 
-@app.get('/full_page')
+
+@app.get("/full_page")
 async def full_page(request: Request):
-    return await render(
-        'page.html.jinja2', 
-        context={"magic_number": 42}
-    )
+    return await render("page.html.jinja2", context={"magic_number": 42})
+
 
 @app.get("/only_content")
 async def only_content(request: Request):
     return await render(
-        'page.html.jinja2',
-        block='content',
-        context={"magic_number": 42}
+        "page.html.jinja2", block="content", context={"magic_number": 42}
     )
 ```
 
@@ -239,20 +229,21 @@ from litestar.template.config import TemplateConfig
 from jinja2_fragments.litestar import HTMXBlockTemplate
 
 
-@get('/full_page')
+@get("/full_page")
 def full_page(request: HTMXRequest) -> Template:
     return HTMXBlockTemplate(
-        template_name='page.html.jinja2',
-        context={"magic_number": 42}
+        template_name="page.html.jinja2", context={"magic_number": 42}
     )
 
-@get('/only_content')
+
+@get("/only_content")
 def only_content(request: HTMXRequest) -> Template:
     return HTMXBlockTemplate(
-        template_name='page.html.jinja2',
-        block_name='content',
-        context={"magic_number": 42}
+        template_name="page.html.jinja2",
+        block_name="content",
+        context={"magic_number": 42},
     )
+
 
 app = Litestar(
     route_handlers=[full_page, only_content],
@@ -260,14 +251,14 @@ app = Litestar(
     template_config=TemplateConfig(
         directory="path/to/templates",
         engine=JinjaTemplateEngine,
-    )
+    ),
 )
 ```
 
 
 ## How to collaborate
 
-This project uses pre-commit hooks to run Ruff on each commit.
+This project uses pre-commit hooks to run Ruff and format Python code examples in documentation with `blacken-docs` on each commit.
 To have that running automatically on your environment, install the project with:
 
 ```shell
@@ -280,7 +271,7 @@ And then run once:
 pre-commit install
 ```
 
-From now on, every time you commit your files on this project, they will be automatically processed by Ruff.
+From now on, every time you commit your files on this project, they will be automatically processed by Ruff and `blacken-docs`.
 
 ## How to run tests
 
