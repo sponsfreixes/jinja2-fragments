@@ -56,7 +56,7 @@ We use ``pytest`` for testing. To run the tests:
 Pre-commit Hooks
 ================
 
-We use ``pre-commit`` hooks to run `Ruff <https://docs.astral.sh/ruff/>`_ automatically before each commit. Make sure to install them before commiting.
+We use ``pre-commit`` hooks to run `Ruff <https://docs.astral.sh/ruff/>`_ and ``blacken-docs`` automatically before each commit. Make sure to install them before commiting.
 The hooks are configured in the ``.pre-commit-config.yaml`` file.
 
 Additionally, you can run the pre-commit hooks manually against all files:

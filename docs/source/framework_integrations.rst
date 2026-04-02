@@ -29,6 +29,7 @@ To use Jinja2 Fragments with Flask, import ``render_block`` from the ``jinja2_fr
 
    app = Flask(__name__)
 
+
    @app.get("/full_page")
    def full_page():
        return render_template("page.html.jinja2", magic_number=42)
@@ -51,6 +52,7 @@ You can also use the ``render_blocks`` function (plural) to render multiple bloc
 
    from jinja2_fragments.flask import render_blocks
 
+
    @app.get("/multiple_blocks")
    def multiple_blocks():
        return render_blocks("page.html.jinja2", ["header", "content"], magic_number=42)
@@ -70,6 +72,7 @@ To use Jinja2 Fragments with Quart, import ``render_block`` from the ``jinja2_fr
    from jinja2_fragments.quart import render_block
 
    app = Quart(__name__)
+
 
    @app.get("/full_page")
    async def full_page():
@@ -107,20 +110,16 @@ To use Jinja2 Fragments with Starlette, import ``Jinja2Blocks`` from the ``jinja
 
    templates = Jinja2Blocks(directory="path/to/templates")
 
+
    async def full_page(request: Request):
-       return templates.TemplateResponse(
-           request,
-           "page.html.jinja2",
-           {"magic_number": 42}
-       )
+       return templates.TemplateResponse(request, "page.html.jinja2", {"magic_number": 42})
+
 
    async def only_content(request: Request):
        return templates.TemplateResponse(
-           request,
-           "page.html.jinja2",
-           {"magic_number": 42},
-           block_name="content"
+           request, "page.html.jinja2", {"magic_number": 42}, block_name="content"
        )
+
 
    routes = [
        Route("/full_page", full_page),
@@ -151,21 +150,16 @@ To use Jinja2 Fragments with FastAPI, import ``Jinja2Blocks`` from the ``jinja2_
 
    templates = Jinja2Blocks(directory="path/to/templates")
 
+
    @app.get("/full_page")
    async def full_page(request: Request):
-       return templates.TemplateResponse(
-           request,
-           "page.html.jinja2",
-           {"magic_number": 42}
-       )
+       return templates.TemplateResponse(request, "page.html.jinja2", {"magic_number": 42})
+
 
    @app.get("/only_content")
    async def only_content(request: Request):
        return templates.TemplateResponse(
-           request,
-           "page.html.jinja2",
-           {"magic_number": 42},
-           block_name="content"
+           request, "page.html.jinja2", {"magic_number": 42}, block_name="content"
        )
 
 The ``Jinja2Blocks`` class works exactly like FastAPI's ``Jinja2Templates``, but allows you to include an optional ``block_name`` parameter to the ``TemplateResponse`` method.
@@ -187,21 +181,18 @@ To use Jinja2 Fragments with Sanic, import ``render`` from the ``jinja2_fragment
    from jinja2_fragments.sanic import render
 
    app = Sanic(__name__)
-   app.extend(config=sanic_ext.Config(templating_path_to_templates='path/to/templates'))
+   app.extend(config=sanic_ext.Config(templating_path_to_templates="path/to/templates"))
 
-   @app.get('/full_page')
+
+   @app.get("/full_page")
    async def full_page(request: Request):
-       return await render(
-           'page.html.jinja2',
-           context={"magic_number": 42}
-       )
+       return await render("page.html.jinja2", context={"magic_number": 42})
+
 
    @app.get("/only_content")
    async def only_content(request: Request):
        return await render(
-           'page.html.jinja2',
-           block='content',
-           context={"magic_number": 42}
+           "page.html.jinja2", block="content", context={"magic_number": 42}
        )
 
 The ``render`` function is a drop-in replacement for Sanic's template extension's ``render()``. Your request context and environment configuration will work the same as before.
@@ -234,7 +225,7 @@ To use Jinja2 Fragments with Litestar, import ``HTMXBlockTemplate`` from the ``j
    except ImportError:
        # litestar<2.13.0
        from litestar.contrib.htmx.request import HTMXRequest
-   
+
    from litestar import get, Litestar
    from litestar.response import Template
 
@@ -243,20 +234,21 @@ To use Jinja2 Fragments with Litestar, import ``HTMXBlockTemplate`` from the ``j
    from jinja2_fragments.litestar import HTMXBlockTemplate
 
 
-   @get('/full_page')
+   @get("/full_page")
    def full_page(request: HTMXRequest) -> Template:
        return HTMXBlockTemplate(
-           template_name='page.html.jinja2',
-           context={"magic_number": 42}
+           template_name="page.html.jinja2", context={"magic_number": 42}
        )
 
-   @get('/only_content')
+
+   @get("/only_content")
    def only_content(request: HTMXRequest) -> Template:
        return HTMXBlockTemplate(
-           template_name='page.html.jinja2',
-           block_name='content',
-           context={"magic_number": 42}
+           template_name="page.html.jinja2",
+           block_name="content",
+           context={"magic_number": 42},
        )
+
 
    app = Litestar(
        route_handlers=[full_page, only_content],
@@ -264,7 +256,7 @@ To use Jinja2 Fragments with Litestar, import ``HTMXBlockTemplate`` from the ``j
        template_config=TemplateConfig(
            directory="path/to/templates",
            engine=JinjaTemplateEngine,
-       )
+       ),
    )
 
 .. note::

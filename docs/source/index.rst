@@ -85,7 +85,7 @@ You can render only the ``content`` block with:
 
     environment = Environment(
         loader=FileSystemLoader("my_templates"),
-        autoescape=select_autoescape(("html", "jinja2"))
+        autoescape=select_autoescape(("html", "jinja2")),
     )
     rendered_html = render_block(
         environment, "page.html.jinja2", "content", magic_number=42
@@ -115,13 +115,15 @@ Each framework has its own integration patterns:
 
          app = Flask(__name__)
 
-         @app.route('/profile/<username>')
-         def profile(username):
-             return render_template('profile.html.jinja2', username=username)
 
-         @app.route('/profile/<username>/details')
+         @app.route("/profile/<username>")
+         def profile(username):
+             return render_template("profile.html.jinja2", username=username)
+
+
+         @app.route("/profile/<username>/details")
          def profile_details(username):
-             return render_block('profile.html.jinja2', 'details', username=username)
+             return render_block("profile.html.jinja2", "details", username=username)
 
    .. tab:: Quart
 
@@ -132,13 +134,15 @@ Each framework has its own integration patterns:
 
          app = Quart(__name__)
 
-         @app.route('/profile/<username>')
-         async def profile(username):
-             return await render_template('profile.html.jinja2', username=username)
 
-         @app.route('/profile/<username>/details')
+         @app.route("/profile/<username>")
+         async def profile(username):
+             return await render_template("profile.html.jinja2", username=username)
+
+
+         @app.route("/profile/<username>/details")
          async def profile_details(username):
-             return await render_block('profile.html.jinja2', 'details', username=username)
+             return await render_block("profile.html.jinja2", "details", username=username)
 
    .. tab:: Starlette
 
@@ -151,26 +155,24 @@ Each framework has its own integration patterns:
 
          templates = Jinja2Blocks(directory="templates")
 
+
          async def profile(request: Request):
              username = request.path_params["username"]
              return templates.TemplateResponse(
-                request,
-                'profile.html.jinja2',
-                {"username": username}
-                )
+                 request, "profile.html.jinja2", {"username": username}
+             )
+
 
          async def profile_details(request: Request):
              username = request.path_params["username"]
              return templates.TemplateResponse(
-                 request,
-                 'profile.html.jinja2',
-                 {"username": username},
-                 block_name="details"
+                 request, "profile.html.jinja2", {"username": username}, block_name="details"
              )
 
+
          routes = [
-             Route('/profile/{username}', profile),
-             Route('/profile/{username}/details', profile_details),
+             Route("/profile/{username}", profile),
+             Route("/profile/{username}/details", profile_details),
          ]
          app = Starlette(routes=routes)
 
@@ -184,21 +186,18 @@ Each framework has its own integration patterns:
          app = FastAPI()
          templates = Jinja2Blocks(directory="templates")
 
-         @app.get('/profile/{username}')
+
+         @app.get("/profile/{username}")
          def profile(request: Request, username: str):
              return templates.TemplateResponse(
-                request,
-                'profile.html.jinja2',
-                {"username": username}
-                )
+                 request, "profile.html.jinja2", {"username": username}
+             )
 
-         @app.get('/profile/{username}/details')
+
+         @app.get("/profile/{username}/details")
          def profile_details(request: Request, username: str):
              return templates.TemplateResponse(
-                 request,
-                 'profile.html.jinja2',
-                 {"username": username},
-                 block_name="details"
+                 request, "profile.html.jinja2", {"username": username}, block_name="details"
              )
 
    .. tab:: Sanic
@@ -210,17 +209,18 @@ Each framework has its own integration patterns:
         from jinja2_fragments.sanic import render
 
         app = Sanic(__name__)
-        app.extend(config=sanic_ext.Config(templating_path_to_templates='path/to/templates'))
+        app.extend(config=sanic_ext.Config(templating_path_to_templates="path/to/templates"))
 
-        @app.route('/profile/<username>')
+
+        @app.route("/profile/<username>")
         async def profile(request: Request, username: str):
-            return await render('profile.html.jinja2', context={"username": username}
-            )
+            return await render("profile.html.jinja2", context={"username": username})
 
-        @app.route('/profile/<username>/details')
+
+        @app.route("/profile/<username>/details")
         async def profile_details(request: Request, username: str):
             return await render(
-                'profile.html.jinja2', block='content', context={"username": username}
+                "profile.html.jinja2", block="content", context={"username": username}
             )
 
    .. tab:: Litestar
@@ -233,7 +233,7 @@ Each framework has its own integration patterns:
         except ImportError:
             # litestar<2.13.0
             from litestar.contrib.htmx.request import HTMXRequest
-        
+
         from litestar import get, Litestar
         from litestar.response import Template
 
@@ -242,27 +242,29 @@ Each framework has its own integration patterns:
         from jinja2_fragments.litestar import HTMXBlockTemplate
 
 
-        @get('/profile/{username:str}')
+        @get("/profile/{username:str}")
         def profile(request: HTMXRequest, username: str) -> Template:
             return HTMXBlockTemplate(
-                template_name='profile.html.jinja2',
-                context={"username": username}
+                template_name="profile.html.jinja2", context={"username": username}
             )
 
-        @get('/profile/{username:str}/details')
-        def profile_details(request: HTMXRequest, username:str) -> Template:
+
+        @get("/profile/{username:str}/details")
+        def profile_details(request: HTMXRequest, username: str) -> Template:
             return HTMXBlockTemplate(
-                template_name='profile.html.jinja2',
-                block_name='details',
-                context={"username": username}
+                template_name="profile.html.jinja2",
+                block_name="details",
+                context={"username": username},
             )
+
 
         app = Litestar(
             route_handlers=[profile, profile_details],
             request_class=HTMXRequest,
             template_config=TemplateConfig(
-                directory="path/to/templates", engine=JinjaTemplateEngine,
-            )
+                directory="path/to/templates",
+                engine=JinjaTemplateEngine,
+            ),
         )
 
       .. note::

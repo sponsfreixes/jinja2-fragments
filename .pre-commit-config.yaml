@@ -8,3 +8,7 @@ repos:
         args: [ --fix ]
       # Run the formatter.
       - id: ruff-format
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.20.0
+    hooks:
+      - id: blacken-docs
