@@ -270,9 +270,7 @@ def _render_block_callable(
     overridden with keyword arguments.
     """
     merged = {**context.get_all(), **kwargs}
-    return Markup(
-        render_block(context.environment, template_name, block_name, merged)
-    )
+    return Markup(render_block(context.environment, template_name, block_name, merged))
 
 
 @pass_context
@@ -303,9 +301,7 @@ async def _async_render_block_callable(
     """Async version of :func:`_render_block_callable`."""
     merged = {**context.get_all(), **kwargs}
     return Markup(
-        await render_block_async(
-            context.environment, template_name, block_name, merged
-        )
+        await render_block_async(context.environment, template_name, block_name, merged)
     )
 
 

@@ -115,9 +115,7 @@ class TestAsyncTemplateGlobals:
     @pytest.mark.asyncio
     async def test_async_kwargs_override_context(self, async_environment, get_html):
         """Test that kwargs override parent context in async mode."""
-        template = async_environment.get_template(
-            "include_block_override.html.jinja2"
-        )
+        template = async_environment.get_template("include_block_override.html.jinja2")
         rendered = await template.render_async(lucky_number=LUCKY_NUMBER)
         assert rendered == get_html("include_block_override.html")
 
