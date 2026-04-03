@@ -45,7 +45,7 @@ class TestTemplateGlobals:
     templates via setup_globals.
     """
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True, scope="class")
     def _setup(self, environment):
         setup_globals(environment)
         yield
@@ -82,7 +82,7 @@ class TestTemplateGlobals:
 class TestAsyncTemplateGlobals:
     """Async variants of TestTemplateGlobals."""
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True, scope="class")
     def _setup(self, async_environment):
         setup_globals(async_environment)
         yield
