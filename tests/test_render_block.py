@@ -119,6 +119,7 @@ class TestAsyncTemplateGlobals:
         rendered = await template.render_async(lucky_number=LUCKY_NUMBER)
         assert rendered == get_html("include_block_override.html")
 
+
 class TestSetupGlobals:
     @pytest.mark.parametrize("fixture_name", ["environment", "async_environment"])
     def test_preserves_existing_globals(self, fixture_name, request):
