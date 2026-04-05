@@ -51,7 +51,7 @@ async def render_block_async(
 async def render_blocks_async(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -136,7 +136,7 @@ def render_block(
 def render_blocks(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -150,7 +150,7 @@ def render_blocks(
     Args:
         template_name: The name of the Jinja2 template file. This should
             include only the template file's name, without the path.
-        block_names: A list of block names from the template that you
+        block_names: A sequence of block names from the template that you
             want to render. These blocks are rendered sequentially in the
             given order.
         **context: Additional variables passed as context for rendering
@@ -193,7 +193,7 @@ def render_blocks(
 def _render_template_blocks(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -217,7 +217,7 @@ def _render_template_blocks(
 async def _render_template_blocks_async(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -277,7 +277,7 @@ def _render_block_callable(
 def _render_blocks_callable(
     context: Context,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     **kwargs: typing.Any,
 ) -> Markup:
     """Jinja2 template global that renders multiple blocks from another template.
@@ -309,7 +309,7 @@ async def _async_render_block_callable(
 async def _async_render_blocks_callable(
     context: Context,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     **kwargs: typing.Any,
 ) -> Markup:
     """Async version of :func:`_render_blocks_callable`."""
@@ -337,13 +337,14 @@ def setup_globals(environment: Environment) -> None:
 
     The correct sync or async callable is chosen based on
     ``environment.is_async``.
+    Existing globals named ``render_block`` and ``render_blocks`` are preserved.
 
     Args:
         environment: The Jinja2 :class:`~jinja2.Environment` to modify.
     """
     if environment.is_async:
-        environment.globals["render_block"] = _async_render_block_callable
-        environment.globals["render_blocks"] = _async_render_blocks_callable
+        environment.globals.setdefault("render_block", _async_render_block_callable)
+        environment.globals.setdefault("render_blocks", _async_render_blocks_callable)
     else:
-        environment.globals["render_block"] = _render_block_callable
-        environment.globals["render_blocks"] = _render_blocks_callable
+        environment.globals.setdefault("render_block", _render_block_callable)
+        environment.globals.setdefault("render_blocks", _render_blocks_callable)

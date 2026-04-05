@@ -119,6 +119,35 @@ class TestAsyncTemplateGlobals:
         rendered = await template.render_async(lucky_number=LUCKY_NUMBER)
         assert rendered == get_html("include_block_override.html")
 
+class TestSetupGlobals:
+    @pytest.mark.parametrize("fixture_name", ["environment", "async_environment"])
+    def test_preserves_existing_globals(self, fixture_name, request):
+        """setup_globals should not clobber user-defined globals."""
+        environment = request.getfixturevalue(fixture_name)
+        sentinel_render_block = object()
+        sentinel_render_blocks = object()
+
+        original_render_block = environment.globals.get("render_block")
+        original_render_blocks = environment.globals.get("render_blocks")
+
+        environment.globals["render_block"] = sentinel_render_block
+        environment.globals["render_blocks"] = sentinel_render_blocks
+
+        try:
+            setup_globals(environment)
+            assert environment.globals["render_block"] is sentinel_render_block
+            assert environment.globals["render_blocks"] is sentinel_render_blocks
+        finally:
+            if original_render_block is None:
+                environment.globals.pop("render_block", None)
+            else:
+                environment.globals["render_block"] = original_render_block
+
+            if original_render_blocks is None:
+                environment.globals.pop("render_blocks", None)
+            else:
+                environment.globals["render_blocks"] = original_render_blocks
+
 
 class TestBlockNotFoundError:
     def test_exception_message(self):

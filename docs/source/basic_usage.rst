@@ -128,3 +128,4 @@ Any keyword arguments you pass will override individual context variables.
    ``setup_globals`` automatically selects the correct sync or async
    implementation based on ``environment.is_async``, so it works with both
    synchronous and asynchronous environments.
+   Existing globals named ``render_block`` and ``render_blocks`` are preserved.
