@@ -7,6 +7,7 @@ from jinja2_fragments import (
     render_block_async,
     render_blocks,
     render_blocks_async,
+    setup_globals,
 )
 
 
@@ -37,6 +38,116 @@ class TestFullpage:
 
         html = get_html(html_name)
         assert html == rendered
+
+
+class TestTemplateGlobals:
+    """Test render_block / render_blocks called from within
+    templates via setup_globals.
+    """
+
+    @pytest.fixture(autouse=True, scope="class")
+    def _setup(self, environment):
+        setup_globals(environment)
+        yield
+        # Clean up globals so other tests are unaffected
+        environment.globals.pop("render_block", None)
+        environment.globals.pop("render_blocks", None)
+
+    def test_render_block_global(self, environment, get_html):
+        """Test single-block rendering via template global with explicit kwargs."""
+        template = environment.get_template("include_block.html.jinja2")
+        rendered = template.render(lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_block.html")
+
+    def test_render_blocks_global(self, environment, get_html):
+        """Test multi-block rendering via template global."""
+        template = environment.get_template("include_blocks.html.jinja2")
+        rendered = template.render(name=NAME, lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_blocks.html")
+
+    def test_auto_context_forwarding(self, environment, get_html):
+        """Test that the parent template context is automatically forwarded."""
+        template = environment.get_template("include_block_auto_context.html.jinja2")
+        rendered = template.render(lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_block_auto_context.html")
+
+    def test_kwargs_override_context(self, environment, get_html):
+        """Test that kwargs passed in the template override the parent context."""
+        template = environment.get_template("include_block_override.html.jinja2")
+        # Parent context has lucky_number="42", but template overrides with "99"
+        rendered = template.render(lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_block_override.html")
+
+
+class TestAsyncTemplateGlobals:
+    """Async variants of TestTemplateGlobals."""
+
+    @pytest.fixture(autouse=True, scope="class")
+    def _setup(self, async_environment):
+        setup_globals(async_environment)
+        yield
+        async_environment.globals.pop("render_block", None)
+        async_environment.globals.pop("render_blocks", None)
+
+    @pytest.mark.asyncio
+    async def test_async_render_block_global(self, async_environment, get_html):
+        """Test single-block rendering via async template global."""
+        template = async_environment.get_template("include_block.html.jinja2")
+        rendered = await template.render_async(lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_block.html")
+
+    @pytest.mark.asyncio
+    async def test_async_render_blocks_global(self, async_environment, get_html):
+        """Test multi-block rendering via async template global."""
+        template = async_environment.get_template("include_blocks.html.jinja2")
+        rendered = await template.render_async(name=NAME, lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_blocks.html")
+
+    @pytest.mark.asyncio
+    async def test_async_auto_context_forwarding(self, async_environment, get_html):
+        """Test that parent context is forwarded in async mode."""
+        template = async_environment.get_template(
+            "include_block_auto_context.html.jinja2"
+        )
+        rendered = await template.render_async(lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_block_auto_context.html")
+
+    @pytest.mark.asyncio
+    async def test_async_kwargs_override_context(self, async_environment, get_html):
+        """Test that kwargs override parent context in async mode."""
+        template = async_environment.get_template("include_block_override.html.jinja2")
+        rendered = await template.render_async(lucky_number=LUCKY_NUMBER)
+        assert rendered == get_html("include_block_override.html")
+
+
+class TestSetupGlobals:
+    @pytest.mark.parametrize("fixture_name", ["environment", "async_environment"])
+    def test_preserves_existing_globals(self, fixture_name, request):
+        """setup_globals should not clobber user-defined globals."""
+        environment = request.getfixturevalue(fixture_name)
+        sentinel_render_block = object()
+        sentinel_render_blocks = object()
+
+        original_render_block = environment.globals.get("render_block")
+        original_render_blocks = environment.globals.get("render_blocks")
+
+        environment.globals["render_block"] = sentinel_render_block
+        environment.globals["render_blocks"] = sentinel_render_blocks
+
+        try:
+            setup_globals(environment)
+            assert environment.globals["render_block"] is sentinel_render_block
+            assert environment.globals["render_blocks"] is sentinel_render_blocks
+        finally:
+            if original_render_block is None:
+                environment.globals.pop("render_block", None)
+            else:
+                environment.globals["render_block"] = original_render_block
+
+            if original_render_blocks is None:
+                environment.globals.pop("render_blocks", None)
+            else:
+                environment.globals["render_blocks"] = original_render_blocks
 
 
 class TestBlockNotFoundError:

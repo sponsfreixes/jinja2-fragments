@@ -3,7 +3,9 @@ from __future__ import annotations
 import typing
 from asyncio import AbstractEventLoop
 
-from jinja2 import Environment
+from jinja2 import Environment, pass_context
+from jinja2.runtime import Context
+from markupsafe import Markup
 
 
 class BlockNotFoundError(Exception):
@@ -49,7 +51,7 @@ async def render_block_async(
 async def render_blocks_async(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -134,7 +136,7 @@ def render_block(
 def render_blocks(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -148,7 +150,7 @@ def render_blocks(
     Args:
         template_name: The name of the Jinja2 template file. This should
             include only the template file's name, without the path.
-        block_names: A list of block names from the template that you
+        block_names: A sequence of block names from the template that you
             want to render. These blocks are rendered sequentially in the
             given order.
         **context: Additional variables passed as context for rendering
@@ -191,7 +193,7 @@ def render_blocks(
 def _render_template_blocks(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -215,7 +217,7 @@ def _render_template_blocks(
 async def _render_template_blocks_async(
     environment: Environment,
     template_name: str,
-    block_names: list[str],
+    block_names: typing.Sequence[str],
     *args: typing.Any,
     **kwargs: typing.Any,
 ) -> str:
@@ -253,3 +255,96 @@ def _get_loop() -> tuple[AbstractEventLoop, bool]:
     except RuntimeError:
         close = True
         return (asyncio.new_event_loop(), close)
+
+
+@pass_context
+def _render_block_callable(
+    context: Context,
+    template_name: str,
+    block_name: str,
+    **kwargs: typing.Any,
+) -> Markup:
+    """Jinja2 template global that renders a single block from another template.
+
+    The current template context is forwarded to the target block and can be
+    overridden with keyword arguments.
+    """
+    merged = {**context.get_all(), **kwargs}
+    return Markup(render_block(context.environment, template_name, block_name, merged))
+
+
+@pass_context
+def _render_blocks_callable(
+    context: Context,
+    template_name: str,
+    block_names: typing.Sequence[str],
+    **kwargs: typing.Any,
+) -> Markup:
+    """Jinja2 template global that renders multiple blocks from another template.
+
+    The current template context is forwarded to the target blocks and can be
+    overridden with keyword arguments.
+    """
+    merged = {**context.get_all(), **kwargs}
+    return Markup(
+        render_blocks(context.environment, template_name, block_names, merged)
+    )
+
+
+@pass_context
+async def _async_render_block_callable(
+    context: Context,
+    template_name: str,
+    block_name: str,
+    **kwargs: typing.Any,
+) -> Markup:
+    """Async version of :func:`_render_block_callable`."""
+    merged = {**context.get_all(), **kwargs}
+    return Markup(
+        await render_block_async(context.environment, template_name, block_name, merged)
+    )
+
+
+@pass_context
+async def _async_render_blocks_callable(
+    context: Context,
+    template_name: str,
+    block_names: typing.Sequence[str],
+    **kwargs: typing.Any,
+) -> Markup:
+    """Async version of :func:`_render_blocks_callable`."""
+    merged = {**context.get_all(), **kwargs}
+    return Markup(
+        await render_blocks_async(
+            context.environment, template_name, block_names, merged
+        )
+    )
+
+
+def setup_globals(environment: Environment) -> None:
+    """Install ``render_block`` and ``render_blocks`` as Jinja2 template globals.
+
+    After calling this function, templates rendered with *environment* can use
+    ``render_block`` and ``render_blocks`` directly in expressions:
+
+    .. code-block:: jinja
+
+        {{ render_block("other_template.html", "block_name", key=value) }}
+        {{ render_blocks("other_template.html", ["block_a", "block_b"], key=value) }}
+
+    The current template context is automatically forwarded; extra keyword
+    arguments override individual context variables.
+
+    The correct sync or async callable is chosen based on
+    ``environment.is_async``.
+    Existing globals named ``render_block`` and ``render_blocks`` are preserved.
+
+    Args:
+        environment: The Jinja2 :class:`~jinja2.Environment` to modify.
+    """
+    if environment.is_async:
+        environment.globals.setdefault("render_block", _async_render_block_callable)
+        environment.globals.setdefault("render_blocks", _async_render_blocks_callable)
+    else:
+        environment.globals.setdefault("render_block", _render_block_callable)
+        environment.globals.setdefault("render_blocks", _render_blocks_callable)

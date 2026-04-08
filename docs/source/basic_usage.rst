@@ -87,3 +87,45 @@ Jinja2 Fragments also allows you to render multiple blocks at once with the ``re
 .. note::
    Rendering multiple blocks is particularly useful for implementing `out-of-band updates <https://htmx.org/attributes/hx-swap-oob/>`_ 
    when using htmx, allowing you to update multiple parts of a page in a single request.
+
+Rendering Blocks from Within Templates
+======================================
+
+You can also call ``render_block`` and ``render_blocks`` directly from within
+Jinja2 template expressions. This is useful when a template needs to compose
+fragments from other template files.
+
+To enable this, call :func:`~jinja2_fragments.setup_globals` on your Jinja2
+environment:
+
+.. code-block:: python
+
+    from jinja2 import Environment, FileSystemLoader, select_autoescape
+    from jinja2_fragments import setup_globals
+
+    environment = Environment(
+        loader=FileSystemLoader("my_templates"),
+        autoescape=select_autoescape(("html", "jinja2")),
+    )
+    setup_globals(environment)
+
+Once installed, you can use ``render_block`` and ``render_blocks`` in any
+template rendered with that environment:
+
+.. code-block:: html
+
+    <div id="customer">
+      {{ render_block("customer/edit.html.jinja2", "customer", customer=invoice.customer) }}
+    </div>
+
+    {# Render multiple blocks at once #}
+    {{ render_blocks("dashboard.html.jinja2", ["stats", "chart"], user=user) }}
+
+The current template context is automatically forwarded to the rendered block(s).
+Any keyword arguments you pass will override individual context variables.
+
+.. note::
+   ``setup_globals`` automatically selects the correct sync or async
+   implementation based on ``environment.is_async``, so it works with both
+   synchronous and asynchronous environments.
+   Existing globals named ``render_block`` and ``render_blocks`` are preserved.
