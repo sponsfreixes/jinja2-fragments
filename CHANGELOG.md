@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.12.0
+Released 2026-04-07
+* Adds Starlette API reference documentation
+* Formats documentation code with Black
+* Adds Python 3.14 to the test matrix
+* Allows rendering blocks from within templates (new feature suggested on [Issue #47](https://github.com/sponsfreixes/jinja2-fragments/issues/47)).
+ 
 ## Version 1.11.0
 Released 2025-11-20
 * Adds native Starlette support (solves [Issue #45](https://github.com/sponsfreixes/jinja2-fragments/issues/45)).
