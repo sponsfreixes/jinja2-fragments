@@ -22,6 +22,10 @@ you have a single file for both cases. See below for examples.
 The detailed documentation is available at [Read the Docs](https://jinja2-fragments.readthedocs.io/). The rest of this
 README is a summarized version of it.
 
+## Security
+
+If you discover a security vulnerability, please report it privately following the instructions in [`SECURITY.md`](SECURITY.md).
+
 ## Install
 
 It's just `pip install jinja2-fragments` and you're all set. It's a pure Python package
