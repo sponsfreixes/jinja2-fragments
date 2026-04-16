@@ -11,6 +11,7 @@ Jinja2 Fragments Documentation
 
 .. image:: https://img.shields.io/github/license/sponsfreixes/jinja2-fragments
    :alt: License
+
 .. raw:: html
 
    <a href="https://www.bestpractices.dev/projects/11076"><img src="https://www.bestpractices.dev/projects/11076/badge"></a>
