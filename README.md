@@ -1,4 +1,5 @@
 # Jinja2 fragments
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11076/badge)](https://www.bestpractices.dev/projects/11076)
 
 Jinja2 Fragments allows rendering individual blocks from
 [Jinja2 templates](https://palletsprojects.com/p/jinja/). This library was created
